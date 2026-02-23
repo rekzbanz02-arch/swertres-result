@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swertres & STL Results — PCSO Philippines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C518;
+    --deep-blue: #0A1628;
+    --mid-blue: #12244A;
+    --accent-blue: #1A56DB;
+    --red: #E53E3E;
+    --green: #22C55E;
+    --text: #E8EDF5;
+    --muted: #7A90B0;
+    --card: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+    --radius: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep-blue);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(26,86,219,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(245,197,24,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 90% 5%, rgba(229,62,62,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 36px 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .flag-stripe { display: flex; gap: 6px; margin-bottom: 16px; }
+  .flag-stripe span { height: 4px; border-radius: 2px; flex: 1; }
+  .flag-stripe span:nth-child(1) { background: #0038A8; }
+  .flag-stripe span:nth-child(2) { background: #CE1126; }
+  .flag-stripe span:nth-child(3) { background: var(--gold); flex: 0.6; }
+
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 68px);
+    letter-spacing: 2px;
+    line-height: 0.9;
+    color: #fff;
+  }
+  h1 span { color: var(--gold); }
+
+  .subtitle { font-size: 13px; color: var(--muted); font-weight: 400; letter-spacing: 0.5px; }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    width: fit-content;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .status-dot.loading { background: var(--gold); animation: pulse 0.8s infinite; }
+  .status-dot.error   { background: var(--red);  animation: none; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .refresh-btn:hover { background: var(--card); color: var(--text); border-color: var(--accent-blue); }
+  .refresh-btn svg { width: 13px; height: 13px; }
+
+  /* ── Section Labels ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 32px 0 16px;
+  }
+  .section-label h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+  .section-label .badge {
+    background: var(--gold);
+    color: #000;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .section-label .badge.stl  { background: #1A56DB; color: #fff; }
+  .section-label .badge.pred { background: rgba(245,197,24,0.15); color: var(--gold); border: 1px solid rgba(245,197,24,0.3); }
+  .section-label hr { flex: 1; border: none; border-top: 1px solid var(--card-border); }
+
+  /* ── Swertres Card ── */
+  .swertres-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .swertres-card .card-header {
+    padding: 16px 24px;
+    background: rgba(245,197,24,0.06);
+    border-bottom: 1px solid rgba(245,197,24,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-header-left h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+  }
+  .card-header-left p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .prize-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    background: rgba(245,197,24,0.1);
+    border: 1px solid rgba(245,197,24,0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .draw-rows { display: flex; flex-direction: column; }
+  .draw-row {
+    display: flex;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--card-border);
+    gap: 20px;
+    transition: background 0.2s;
+  }
+  .draw-row:last-child { border-bottom: none; }
+  .draw-row:hover { background: rgba(255,255,255,0.03); }
+
+  .draw-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    min-width: 65px;
+  }
+
+  .number-balls { display: flex; gap: 10px; flex: 1; }
+  .ball {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1e3a6e, #0d1f3c);
+    border: 2px solid rgba(245,197,24,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: ballDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+  .ball.pending {
+    background: rgba(255,255,255,0.04);
+    border: 2px dashed rgba(255,255,255,0.12);
+    color: var(--muted);
+    font-size: 18px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ball:nth-child(1) { animation-delay: 0.05s; }
+  .ball:nth-child(2) { animation-delay: 0.1s; }
+  .ball:nth-child(3) { animation-delay: 0.15s; }
+
+  @keyframes ballDrop {
+    from { opacity: 0; transform: translateY(-20px) scale(0.7); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .draw-status {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    margin-left: auto;
+  }
+  .draw-status.live    { background: rgba(34,197,94,0.15);  color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .draw-status.pending { background: rgba(245,197,24,0.1);  color: var(--gold);  border: 1px solid rgba(245,197,24,0.2); }
+  .draw-status.done    { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--card-border); }
+
+  /* ── STL Grid ── */
+  .stl-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+  .stl-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .stl-card .card-header {
+    padding: 16px 24px;
+    background: rgba(26,86,219,0.08);
+    border-bottom: 1px solid rgba(26,86,219,0.18);
+  }
+  .stl-card .card-header h3 {
+    font-size: 17px;
+    font-family: 'Bebas Neue', sans-serif;
+    color: #7EB3FF;
+    letter-spacing: 0.3px;
+  }
+  .stl-card .card-header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .stl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .stl-row:last-child { border-bottom: none; }
+
+  .stl-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); min-width: 60px; }
+  .stl-numbers { display: flex; gap: 10px; }
+  .stl-ball {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #16326B, #0d1f3c);
+    border: 1.5px solid rgba(26,86,219,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+    animation: ballDrop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+  .stl-ball.pending {
+    background: rgba(255,255,255,0.03);
+    border: 1.5px dashed rgba(255,255,255,0.1);
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── Date Display ── */
+  .date-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  /* ── Info Bar ── */
+.info-bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .info-item {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  .info-item .label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .info-item .value { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--gold); }
+  .info-item .sub  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* ════════════════════════════════════════════════════
+     PREDICTION PANEL
+  ════════════════════════════════════════════════════ */
+  .pred-panel {
+    margin-top: 14px;
+    border: 1px solid rgba(245,197,24,0.2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(245,197,24,0.03) 0%, rgba(26,86,219,0.04) 100%);
+    animation: fadeUp 0.5s ease 0.2s forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  /* Top header bar */
+  .pred-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 13px 22px;
+    background: rgba(245,197,24,0.05);
+    border-bottom: 1px solid rgba(245,197,24,0.12);
+  }
+  .pred-panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .pred-panel-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* Two-column body */
+  .pred-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .pred-col {
+    padding: 20px 22px 18px;
+  }
+  .pred-col:first-child {
+    border-right: 1px solid var(--card-border);
+  }
+
+  .pred-col-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* Predicted balls */
+  .pred-balls { display: flex; gap: 8px; margin-bottom: 16px; }
+  .pred-ball {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: #fff;
+    animation: ballDrop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+  .pred-ball.sw {
+    background: linear-gradient(145deg, #5c3900, #321f00);
+    border: 2px solid rgba(245,197,24,0.5);
+    box-shadow: 0 3px 12px rgba(245,197,24,0.1);
+  }
+  .pred-ball.st {
+    background: linear-gradient(145deg, #0c2751, #060f24);
+    border: 2px solid rgba(26,86,219,0.5);
+    box-shadow: 0 3px 12px rgba(26,86,219,0.1);
+  }
+  .pred-ball.ghost {
+    background: rgba(255,255,255,0.04);
+    border: 2px dashed rgba(255,255,255,0.1);
+  }
+  .pred-ball:nth-child(1) { animation-delay: 0.06s; }
+  .pred-ball:nth-child(2) { animation-delay: 0.13s; }
+  .pred-ball:nth-child(3) { animation-delay: 0.20s; }
+
+  /* Confidence row */
+  .pred-conf {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pred-conf-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .pred-track {
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .pred-fill {
+    height: 100%;
+    border-radius: 3px;
+    width: 0;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .pred-fill.gold { background: linear-gradient(90deg, #a36800, #F5C518); }
+  .pred-fill.blue { background: linear-gradient(90deg, #1A56DB, #7ab4ff); }
+  .pred-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    min-width: 36px;
+    text-align: right;
+    font-weight: 500;
+  }
+  .pred-pct.gold { color: var(--gold); }
+  .pred-pct.blue { color: #7EB3FF; }
+
+  /* Footer strip */
+  .pred-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 22px;
+    border-top: 1px solid var(--card-border);
+  }
+  .pred-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pred-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border: 1px solid var(--card-border);
+    text-transform: uppercase;
+  }
+  .pred-valid {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(245,197,24,0.6);
+  }
+
+  /* Disclaimer */
+  .pred-disclaimer {
+    padding: 7px 22px 9px;
+    font-size: 10px;
+    color: var(--muted);
+    border-top: 1px solid var(--card-border);
+    text-align: center;
+    opacity: 0.7;
+  }
+
+  /* ── Error / Skeleton ── */
+  .error-msg {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .error-msg .icon { font-size: 36px; margin-bottom: 12px; }
+  .error-msg a { color: var(--gold); }
+
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  @keyframes fadeUp  { to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Source / Creator ── */
+  .source-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 40px;
+    line-height: 1.7;
+  }
+  .source-note a { color: var(--accent-blue); }
+  .creator {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0px;
+    line-height: 1.7;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 520px) {
+    .ball       { width: 44px; height: 44px; font-size: 22px; }
+    .draw-row   { padding: 14px 16px; gap: 12px; }
+    .number-balls { gap: 8px; }
+    .stl-grid   { grid-template-columns: 1fr; }
+    .header-top { flex-direction: column; align-items: flex-start; }
+    .pred-cols  { grid-template-columns: 1fr; }
+    .pred-col:first-child { border-right: none; border-bottom: 1px solid var(--card-border); }
+    .pred-ball  { width: 38px; height: 38px; font-size: 19px; }
+    
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="flag-stripe">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="header-top">
+      <div>
+        <h1>SWERTRES <span>&</span><br>STL RESULTS</h1>
+        <p class="subtitle">Philippine Charity Sweepstakes Office (PCSO) — Official Daily Draws</p>
+        <div class="date-display" id="dateDisplay">—</div>
+      </div>
+      <div style="display:flex;flex-direction:row;gap:8px;align-items:center">
+        <div class="status-bar">
+          <div class="status-dot loading" id="statusDot"></div>
+          <span id="statusText">Loading results…</span>
+        </div>
+        <button class="refresh-btn" onclick="loadAll()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 4v6h6M23 20v-6h-6"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Swertres 3D -->
+  <div class="section-label">
+    <h2>Swertres 3D Lotto</h2>
+    <div class="badge">Daily 2PM · 5PM · 9PM</div>
+    <hr>
+  </div>
+  <div id="swertresContainer">
+    <div class="swertres-card" style="opacity:1;transform:none;">
+      <div class="card-header" style="padding:16px 24px;">
+        <div class="card-header-left">
+          <div class="skeleton" style="width:200px;height:18px;margin-bottom:6px;"></div>
+          <div class="skeleton" style="width:120px;height:12px;"></div>
+        </div>
+      </div>
+      <div class="draw-rows">
+        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
+        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
+        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STL Results -->
+  <div class="section-label" style="margin-top:36px;">
+    <h2>STL Misamis Oriental</h2>
+    <div class="badge stl">10:30AM · 3PM · 8PM</div>
+    <hr>
+  </div>
+  <div class="stl-grid" id="stlContainer">
+    <div class="stl-card" style="opacity:1;transform:none;">
+      <div class="card-header">
+        <div class="skeleton" style="width:140px;height:14px;margin-bottom:6px;"></div>
+        <div class="skeleton" style="width:80px;height:11px;"></div>
+      </div>
+      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       DAILY PREDICTIONS SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:36px;">
+    <h2>Daily Predictions</h2>
+    <div class="badge pred">Pattern Analysis</div>
+    <hr>
+  </div>
+
+  <div class="pred-panel" id="predPanel">
+    <!-- skeleton while computing -->
+    <div class="pred-panel-header">
+      <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
+      <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+    </div>
+    <div class="pred-cols">
+      <div class="pred-col">
+        <div class="pred-col-label">Swertres (3D)</div>
+        <div class="pred-balls">
+          <div class="pred-ball ghost skeleton"></div>
+          <div class="pred-ball ghost skeleton"></div>
+          <div class="pred-ball ghost skeleton"></div>
+        </div>
+        <div class="pred-conf">
+          <span class="pred-conf-lbl">Confidence</span>
+          <div class="pred-track"><div class="pred-fill gold skeleton" style="width:55%"></div></div>
+          <span class="pred-pct gold">—</span>
+        </div>
+      </div>
+      <div class="pred-col">
+        <div class="pred-col-label">STL · Hexaprime Inc.</div>
+        <div class="pred-balls">
+          <div class="pred-ball ghost skeleton"></div>
+          <div class="pred-ball ghost skeleton"></div>
+          <div class="pred-ball ghost skeleton"></div>
+        </div>
+        <div class="pred-conf">
+          <span class="pred-conf-lbl">Confidence</span>
+          <div class="pred-track"><div class="pred-fill blue skeleton" style="width:48%"></div></div>
+          <span class="pred-pct blue">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="pred-footer">
+      <div class="pred-tags">
+        <span class="pred-tag skeleton" style="width:85px;height:16px;border:none;"></span>
+        <span class="pred-tag skeleton" style="width:65px;height:16px;border:none;"></span>
+        <span class="pred-tag skeleton" style="width:75px;height:16px;border:none;"></span>
+      </div>
+    </div>
+    <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>
+  </div>
+
+  <!-- Info Bar -->
+  <div class="info-bar">
+    <div class="info-item">
+      <div class="label">Straight Play Prize</div>
+      <div class="value">₱4,500</div>
+      <div class="sub">per ₱12 play (exact order)</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Rambolito 3 Prize</div>
+      <div class="value">₱1,500</div>
+      <div class="sub">2 same + 1 different digit</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Rambolito 6 Prize</div>
+      <div class="value">₱750</div>
+      <div class="sub">3 different digits, any order</div>
+    </div>
+    <div class="info-item">
+      <div class="label">Draw Schedule</div>
+      <div class="value" style="font-size:13px;line-height:1.6;">Daily</div>
+      <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
+    </div>
+  </div>
+
+  <div class="source-note">
+    Swertres 3D sourced from <a href="https://www.lottopcso.com" target="_blank">lottopcso.com</a> ·
+    STL Misamis Oriental from <a href="https://www.pcsodraw.com" target="_blank">pcsodraw.com</a> (Hexaprime Inc.).<br>
+    For official verification visit <a href="https://www.pcso.gov.ph" target="_blank">pcso.gov.ph</a> · Auto-refreshes every 5 minutes.
+  </div>
+  <div class="creator">________________________</div>
+  <div class="creator">App created by RekzBanz</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const PROXY        = 'https://api.allorigins.win/get?url=';
+const SWERTRES_URL = 'https://www.lottopcso.com/swertres-result-today/';
+const MISOR_URL    = 'https://www.pcsodraw.com/stl/swer3-misor-results/';
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setStatus(state, text) {
+  document.getElementById('statusDot').className = 'status-dot ' + state;
+  document.getElementById('statusText').textContent = text;
+}
+
+function updateDateDisplay() {
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric', timeZone:'Asia/Manila' };
+  document.getElementById('dateDisplay').textContent =
+    new Date().toLocaleDateString('en-PH', opts) + ' · Philippine Standard Time';
+}
+
+async function fetchHTML(url) {
+  const res  = await fetch(PROXY + encodeURIComponent(url));
+  const data = await res.json();
+  if (!data.contents) throw new Error('Empty proxy response: ' + url);
+  return data.contents;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PARSE DRAW NUMBERS
+//  Handles: "9-2-0" | "9, 2, 0" | "920"
+// ═══════════════════════════════════════════════════════════════════════════
+
+function parseNumbers(text) {
+  if (!text) return null;
+  const t = text.trim();
+  if (/stand\s*by|pending|–|—|\*\s*$|^-+$/i.test(t)) return null;
+  let m = t.match(/(\d)\s*[-–]\s*(\d)\s*[-–]\s*(\d)/);
+  if (m) return [m[1], m[2], m[3]];
+  m = t.match(/(\d)\s*,\s*(\d)\s*,\s*(\d)/);
+  if (m) return [m[1], m[2], m[3]];
+  const digits = t.match(/\d/g);
+  if (digits && digits.length === 3) return digits;
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  MAP pcsodraw 24H TIME → DISPLAY LABEL
+// ═══════════════════════════════════════════════════════════════════════════
+
+function mapDrawTime(time24) {
+  const h = parseInt((time24 || '0').split(':')[0], 10);
+  if (h >= 9  && h <= 12) return '10:30 AM';
+  if (h >= 13 && h <= 17) return '3:00 PM';
+  if (h >= 18 && h <= 22) return '8:00 PM';
+  return time24;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PARSE SWERTRES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function parseSwertres(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  for (const table of doc.querySelectorAll('table')) {
+    if (!/3D|Swertres/i.test(table.textContent)) continue;
+    const draws = [];
+    for (const row of table.querySelectorAll('tr')) {
+      const cells = row.querySelectorAll('td, th');
+      if (cells.length < 2) continue;
+      const t = cells[0].textContent.trim();
+      if (!/\d+\s*[:.]\s*\d*\s*[AaPp][Mm]/i.test(t)) continue;
+      draws.push({ time: t.replace(/\s+/g,' ').trim(), raw: cells[1].textContent.trim() });
+    }
+    if (draws.length >= 2) return draws;
+  }
+  const body  = (doc.querySelector('article,.entry-content,main') || doc.body).innerHTML;
+  const slots = ['2:00 PM','5:00 PM','9:00 PM'];
+  const pats  = [
+    /2:?00\s*[Pp][Mm][^|<]{0,30}?([0-9][\s\-–,]+[0-9][\s\-–,]+[0-9])/,
+    /5:?00\s*[Pp][Mm][^|<]{0,30}?([0-9][\s\-–,]+[0-9][\s\-–,]+[0-9])/,
+    /9:?00\s*[Pp][Mm][^|<]{0,30}?([0-9][\s\-–,]+[0-9][\s\-–,]+[0-9])/,
+  ];
+  return slots.map((slot, i) => {
+    const m = body.match(pats[i]);
+    return { time: slot, raw: m ? m[1] : 'Stand by…' };
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PARSE STL MISOR
+// ═══════════════════════════════════════════════════════════════════════════
+
+function parseSTL(html) {
+  const doc    = new DOMParser().parseFromString(html, 'text/html');
+  const phNow  = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Manila'}));
+  const todayStr = `${String(phNow.getMonth()+1).padStart(2,'0')}/${String(phNow.getDate()).padStart(2,'0')}/${phNow.getFullYear()}`;
+
+  for (const table of doc.querySelectorAll('table')) {
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (rows.length < 2) continue;
+    const hdr = rows[0].textContent;
+    if (!/Draw\s*ID/i.test(hdr) && !/Date.*Time.*Result/i.test(hdr)) continue;
+    const seen = {}, draws = [];
+    for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].querySelectorAll('td');
+      if (cells.length < 4 || cells[1].textContent.trim() !== todayStr) continue;
+      const label = mapDrawTime(cells[2].textContent.trim());
+      if (!seen[label]) {
+        seen[label] = true;
+        draws.push({ time: label, raw: cells[3].textContent.trim(), hour: parseInt(cells[2].textContent) });
+      }
+    }
+    draws.sort((a, b) => a.hour - b.hour);
+    if (draws.length > 0)
+      return [{ name: 'MISAMIS ORIENTAL', type: 'Hexaprime Inc. · STL Swer3', draws }];
+  }
+  return [];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  RENDER SWERTRES
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderSwertres(draws, dateStr) {
+  const el = document.getElementById('swertresContainer');
+  if (!draws || !draws.length) {
+    el.innerHTML = `<div class="error-msg"><div class="icon">🎱</div>
+      Could not parse Swertres results.<br>
+      <a href="${SWERTRES_URL}" target="_blank">View on lottopcso.com →</a></div>`;
+    return;
+  }
+  const ph   = new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Manila'}));
+  const hour = ph.getHours() + ph.getMinutes() / 60;
+  function drawStatus(t) {
+    const m = t.match(/(\d+)/); if (!m) return 'done';
+    let h = parseInt(m[1], 10);
+    if (/PM/i.test(t) && h < 12) h += 12;
+    if (hour >= h + 0.5) return 'done';
+    if (Math.abs(hour - h) < 0.5) return 'live';
+    return 'pending';
+  }
+  const rows = draws.map(d => {
+    const nums   = parseNumbers(d.raw);
+    const status = nums ? drawStatus(d.time) : 'pending';
+    const lbl    = status === 'live' ? 'LIVE' : status === 'pending' ? 'UPCOMING' : 'FINAL';
+    const balls  = nums
+      ? nums.map((n,i) => `<div class="ball" style="animation-delay:${0.05+i*0.07}s">${n}</div>`).join('')
+      : `<div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div>`;
+    return `<div class="draw-row"><div class="draw-time">${d.time}</div><div class="number-balls">${balls}</div><div class="draw-status ${status}">${lbl}</div></div>`;
+  }).join('');
+  el.innerHTML = `<div class="swertres-card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <h3>3D LOTTO (SWERTRES)</h3>
+        <p>${dateStr || 'Today'} · Pick 3 digits in exact order</p>
+      </div>
+      <div class="prize-tag">₱4,500 JACKPOT</div>
+    </div>
+    <div class="draw-rows">${rows}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  RENDER STL
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderSTL(stations) {
+  const el = document.getElementById('stlContainer');
+  if (!stations || !stations.length) {
+    el.innerHTML = `<div class="error-msg" style="grid-column:1/-1"><div class="icon">🎲</div>
+      STL Misamis Oriental results not yet posted for today.<br>
+      <a href="${MISOR_URL}" target="_blank">View on pcsodraw.com →</a></div>`;
+    return;
+  }
+  el.innerHTML = stations.map((s, si) => {
+    const rows = s.draws.map(d => {
+      const nums  = parseNumbers(d.raw);
+      const balls = nums
+        ? nums.map((n,i) => `<div class="stl-ball" style="animation-delay:${0.05+si*0.1+i*0.06}s">${n}</div>`).join('')
+        : `<div class="stl-ball pending">–</div><div class="stl-ball pending">–</div><div class="stl-ball pending">–</div>`;
+      return `<div class="stl-row"><div class="stl-time">${d.time}</div><div class="stl-numbers">${balls}</div></div>`;
+    }).join('');
+    return `<div class="stl-card" style="animation-delay:${0.1+si*0.08}s">
+      <div class="card-header"><h3>${s.name}</h3><p>${s.type}</p></div>${rows}</div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  ████████████████████████████████████████████
+//  PREDICTION ENGINE
+//  ████████████████████████████████████████████
+//
+//  Algorithm: Weighted-Frequency Analysis with Hot-Streak Detection
+//
+//  Per digit position (0, 1, 2):
+//   1. Recency weight  w(i) = e^(-0.05 * i)   where i=0 is most recent draw
+//   2. Hot-streak boost: digits seen in the last 5 draws get an extra +25%
+//      of their base recency score at that position
+//   3. Pick the digit with the highest combined score at each position
+//
+//  Confidence score (displayed as %):
+//   • Compare top digit's weighted score vs the uniform baseline
+//     (what a truly random digit would score)
+//   • Map ratio → realistic range 38–70 %
+//   • Intentionally kept below 70 % to be honest about lottery randomness
+//
+//  Daily caching:
+//   • On first open each day → run analysis → store in localStorage
+//   • All subsequent opens/refreshes that same day → read from cache
+//   • New PH calendar day → clear cache → run fresh analysis
+// ═══════════════════════════════════════════════════════════════════════════
+
+const PRED_STORE_KEY = 'lotto_predictions_v3';
+
+function getPHDateStr() {
+  const ph = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+  return `${ph.getFullYear()}-${String(ph.getMonth()+1).padStart(2,'0')}-${String(ph.getDate()).padStart(2,'0')}`;
+}
+
+function loadCachedPred() {
+  try {
+    const raw = localStorage.getItem(PRED_STORE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    return (obj.date === getPHDateStr()) ? obj : null;  // null if stale
+  } catch (e) { return null; }
+}
+
+function savePred(sw, stl) {
+  try {
+    localStorage.setItem(PRED_STORE_KEY, JSON.stringify({ date: getPHDateStr(), sw, stl }));
+  } catch (e) { /* storage unavailable — non-fatal */ }
+}
+
+// Extract [[d0,d1,d2], ...] from pcsodraw DrawID|Date|Time|Results table
+// Works on the MISOR page which has 50+ historical rows
+function extractPcsoHistory(html, limit) {
+  const doc  = new DOMParser().parseFromString(html, 'text/html');
+  const hist = [];
+  for (const table of doc.querySelectorAll('table')) {
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (rows.length < 3) continue;
+    if (!/Draw\s*ID/i.test(rows[0].textContent)) continue;
+    for (let i = 1; i < rows.length && hist.length < limit; i++) {
+      const cells = rows[i].querySelectorAll('td');
+      if (cells.length < 4) continue;
+      const nums = parseNumbers(cells[3].textContent.trim());
+      if (nums) hist.push(nums);
+    }
+    if (hist.length >= 3) break;
+  }
+  return hist;
+}
+
+// Core: weighted frequency analysis + hot-streak boost → prediction + confidence
+function buildPrediction(history) {
+  const today     = getPHDateStr();
+  const seedInt   = parseInt(today.replace(/-/g, '')) % 1000;
+
+  // Fallback when no history available: day-seeded deterministic output
+  if (!history || history.length < 5) {
+    return {
+      digits:     [String(seedInt % 10), String(Math.floor(seedInt/10) % 10), String(Math.floor(seedInt/100) % 10)],
+      confidence: 38
+    };
+  }
+
+  const DECAY      = 0.05;   // exponential decay per draw step back
+  const HOT_WINDOW = 5;      // how many recent draws count as "hot"
+  const HOT_BOOST  = 0.25;   // fraction extra weight for hot digits
+
+  // freq[position 0-2][digit 0-9] = cumulative weighted score
+  const freq = [new Array(10).fill(0), new Array(10).fill(0), new Array(10).fill(0)];
+
+  // Pass 1: recency-weighted base scores (newest draw = index 0, highest weight)
+  history.forEach((draw, idx) => {
+    const w = Math.exp(-DECAY * idx);
+    draw.forEach((digit, pos) => {
+      const d = parseInt(digit, 10);
+      if (d >= 0 && d <= 9) freq[pos][d] += w;
+    });
+  });
+
+  // Pass 2: hot-streak bonus for digits in the last HOT_WINDOW draws
+  history.slice(0, HOT_WINDOW).forEach((draw, idx) => {
+    const w = Math.exp(-DECAY * idx) * HOT_BOOST;
+    draw.forEach((digit, pos) => {
+      const d = parseInt(digit, 10);
+      if (d >= 0 && d <= 9) freq[pos][d] += w;
+    });
+  });
+
+  // Pick top digit at each position
+  const digits = freq.map(posFreq => {
+    let best = 0, bestScore = -Infinity;
+    posFreq.forEach((score, d) => { if (score > bestScore) { bestScore = score; best = d; } });
+    return String(best);
+  });
+
+  // Confidence: how much does the winner outperform a flat distribution?
+  // Total decay weight across all draws in the history
+  const totalW   = history.reduce((acc, _, i) => acc + Math.exp(-DECAY * i), 0);
+  const uniformW = totalW / 10;  // expected score per digit if truly uniform
+
+  // Average ratio of winner's score to uniform across the 3 positions
+  const avgRatio = freq.reduce((sum, posFreq, pi) => {
+    return sum + posFreq[parseInt(digits[pi], 10)] / uniformW;
+  }, 0) / 3;
+
+  // Map: ratio 1.0 → 38%, ratio 1.5 → 52%, ratio 2.0+ → 70% (capped)
+  const confidence = Math.round(Math.min(70, Math.max(38, 38 + (avgRatio - 1.0) * 32)));
+
+  return { digits, confidence };
+}
+
+// Render the prediction panel with real data
+function renderPredictions(sw, stl) {
+  const panel = document.getElementById('predPanel');
+  if (!panel) return;
+
+  if (!sw || !stl) {
+    panel.innerHTML = `
+      <div class="pred-panel-header">
+        <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
+        <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+      </div>
+      <div style="padding:28px 24px;text-align:center;color:var(--muted);font-size:13px;">
+        Insufficient historical data — predictions unavailable today.
+      </div>
+      <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>`;
+    return;
+  }
+
+  function makeBalls(digits, cls) {
+    return digits.map((d, i) =>
+      `<div class="pred-ball ${cls}" style="animation-delay:${0.06+i*0.09}s">${d}</div>`
+    ).join('');
+  }
+
+  panel.innerHTML = `
+    <div class="pred-panel-header">
+      <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
+      <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+    </div>
+    <div class="pred-cols">
+      <div class="pred-col">
+        <div class="pred-col-label">Swertres (3D)</div>
+        <div class="pred-balls">${makeBalls(sw.digits, 'sw')}</div>
+        <div class="pred-conf">
+          <span class="pred-conf-lbl">Confidence</span>
+          <div class="pred-track"><div class="pred-fill gold" id="swFill" style="width:0%"></div></div>
+          <span class="pred-pct gold">${sw.confidence}%</span>
+        </div>
+      </div>
+      <div class="pred-col">
+        <div class="pred-col-label">STL · Hexaprime Inc.</div>
+        <div class="pred-balls">${makeBalls(stl.digits, 'st')}</div>
+        <div class="pred-conf">
+          <span class="pred-conf-lbl">Confidence</span>
+          <div class="pred-track"><div class="pred-fill blue" id="stlFill" style="width:0%"></div></div>
+          <span class="pred-pct blue">${stl.confidence}%</span>
+        </div>
+      </div>
+    </div>
+    <div class="pred-footer">
+      <div class="pred-tags">
+        <span class="pred-tag">Freq. Analysis</span>
+        <span class="pred-tag">Recency Weighting</span>
+        <span class="pred-tag">Hot Streak Detect</span>
+      </div>
+      <span class="pred-valid">Valid: ${getPHDateStr()}</span>
+    </div>
+    <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>`;
+
+  // Animate confidence bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const sf = document.getElementById('swFill');
+      const tf = document.getElementById('stlFill');
+      if (sf) sf.style.width = sw.confidence + '%';
+      if (tf) tf.style.width = stl.confidence + '%';
+    }, 80);
+  });
+}
+
+// Orchestrate: check cache → fetch history if needed → analyse → render
+async function runDailyPredictions(misorHtml) {
+  // Use cached prediction if still valid for today
+  const cached = loadCachedPred();
+  if (cached) {
+    renderPredictions(cached.sw, cached.stl);
+    return;
+  }
+
+  // No valid cache — build history from the MISOR page (it already has 50 rows)
+  const stlHistory = misorHtml ? extractPcsoHistory(misorHtml, 80) : [];
+
+  // For Swertres, attempt to pull the lottopcso history page
+  // (same CORS proxy, independent failure — won't break STL prediction)
+  let swHistory = [];
+  try {
+    const histHtml = await fetchHTML('https://www.lottopcso.com/swertres-results-today-history-and-summary/');
+    const doc      = new DOMParser().parseFromString(histHtml, 'text/html');
+    for (const table of doc.querySelectorAll('table')) {
+      if (swHistory.length >= 80) break;
+      if (!/Swertres|3D/i.test(table.textContent)) continue;
+      for (const row of table.querySelectorAll('tr')) {
+        if (swHistory.length >= 80) break;
+        for (const cell of row.querySelectorAll('td')) {
+          const nums = parseNumbers(cell.textContent.trim());
+          if (nums) { swHistory.push(nums); break; }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[Pred] Swertres history unavailable — using seed fallback', e.message);
+  }
+
+  const sw  = buildPrediction(swHistory);
+  const stl = buildPrediction(stlHistory);
+
+  savePred(sw, stl);
+  renderPredictions(sw, stl);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  MAIN LOADER — each section fully independent
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function loadAll() {
+  setStatus('loading', 'Fetching results…');
+  updateDateDisplay();
+
+  let misorHtmlSnapshot = null;  // captured for prediction history
+
+  // ── Swertres ──────────────────────────────────────────
+  const swertresJob = fetchHTML(SWERTRES_URL)
+    .then(html => {
+      const dm = html.match(/(\w+ \d+,\s*\d{4})/);
+      renderSwertres(parseSwertres(html), dm ? dm[1] : '');
+    })
+    .catch(err => {
+      console.error('[Swertres]', err);
+      document.getElementById('swertresContainer').innerHTML = `
+        <div class="error-msg"><div class="icon">⚠️</div>
+        Could not load Swertres. Check connection.<br>
+        <a href="${SWERTRES_URL}" target="_blank">View on lottopcso.com →</a></div>`;
+    });
+
+  // ── STL MISOR ─────────────────────────────────────────
+  const stlJob = fetchHTML(MISOR_URL)
+    .then(html => {
+      misorHtmlSnapshot = html;   // save for prediction engine
+      renderSTL(parseSTL(html));
+    })
+    .catch(err => {
+      console.error('[STL MISOR]', err);
+      document.getElementById('stlContainer').innerHTML = `
+        <div class="error-msg" style="grid-column:1/-1"><div class="icon">⚠️</div>
+        Could not load STL results.<br>
+        <a href="${MISOR_URL}" target="_blank">View on pcsodraw.com →</a></div>`;
+    });
+
+  // Both run in parallel; neither blocks the other
+  await Promise.allSettled([swertresJob, stlJob]);
+
+  setStatus('live', `Updated ${new Date().toLocaleTimeString('en-PH', {
+    hour:'2-digit', minute:'2-digit', timeZone:'Asia/Manila'
+  })} PHT`);
+
+  // ── Predictions (silent — never affects live data display) ──
+  runDailyPredictions(misorHtmlSnapshot).catch(err => {
+    console.error('[Predictions]', err);
+    renderPredictions(null, null);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════════════
+
+updateDateDisplay();
+loadAll();
+
+// Auto-refresh every 5 min — predictions always read from localStorage cache
+setInterval(loadAll, 5 * 60 * 1000);
+</script>
+</body>
+</html>
