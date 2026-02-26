@@ -570,7 +570,64 @@
     .pred-cols  { grid-template-columns: 1fr; }
     .pred-col:first-child { border-right: none; border-bottom: 1px solid var(--card-border); }
     .pred-ball  { width: 38px; height: 38px; font-size: 19px; }
-    
+  }
+
+  .pred-regen-btn {
+    background: none;
+    border: 1px solid rgba(245,197,24,0.3);
+    color: rgba(245,197,24,0.7);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .pred-regen-btn:hover { background: rgba(245,197,24,0.08); color: var(--gold); }
+
+  /* DROPDOWN */
+  .dropdown { margin-bottom: 16px; }
+  .dropdown-toggle {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .dropdown-toggle:hover { color: var(--text); border-color: rgba(79,142,247,0.3); }
+  .dropdown-arrow { transition: transform 0.3s; }
+  .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
+  .dropdown-content {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 20px;
+    display: none;
+  }
+  .dropdown-content.open { display: block; }
+  .formula-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--gold);
+    text-align: center;
   }
 </style>
 </head>
@@ -657,6 +714,7 @@
     <div class="pred-panel-header">
       <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
       <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+      <button class="pred-regen-btn" onclick="regenPredictions()" title="Generate fresh prediction">↻ New Prediction</button>
     </div>
     <div class="pred-cols">
       <div class="pred-col">
@@ -696,27 +754,36 @@
     <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>
   </div>
 
-  <!-- Info Bar -->
-  <div class="info-bar">
-    <div class="info-item">
-      <div class="label">Straight Play Prize</div>
-      <div class="value">₱4,500</div>
-      <div class="sub">per ₱12 play (exact order)</div>
-    </div>
-    <div class="info-item">
-      <div class="label">Rambolito 3 Prize</div>
-      <div class="value">₱1,500</div>
-      <div class="sub">2 same + 1 different digit</div>
-    </div>
-    <div class="info-item">
-      <div class="label">Rambolito 6 Prize</div>
-      <div class="value">₱750</div>
-      <div class="sub">3 different digits, any order</div>
-    </div>
-    <div class="info-item">
-      <div class="label">Draw Schedule</div>
-      <div class="value" style="font-size:13px;line-height:1.6;">Daily</div>
-      <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
+  <!-- DROPDOWN INFO -->
+  <div class="dropdown">
+    <button class="dropdown-toggle" id="dropdownToggle" onclick="toggleDropdown()">
+      <span>💡 Swertres Information</span>
+      <span class="dropdown-arrow">▼</span>
+    </button>
+    <div class="dropdown-content" id="dropdownContent">
+      <!-- Info Bar -->
+      <div class="info-bar">
+        <div class="info-item">
+          <div class="label">Straight Play Prize</div>
+          <div class="value">₱4,500</div>
+          <div class="sub">per ₱12 play (exact order)</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Rambolito 3 Prize</div>
+          <div class="value">₱1,500</div>
+          <div class="sub">2 same + 1 different digit</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Rambolito 6 Prize</div>
+          <div class="value">₱750</div>
+          <div class="sub">3 different digits, any order</div>
+        </div>
+        <div class="info-item">
+          <div class="label">Draw Schedule</div>
+          <div class="value" style="font-size:13px;line-height:1.6;">Daily</div>
+          <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -946,7 +1013,7 @@ function renderSTL(stations) {
 //   • New PH calendar day → clear cache → run fresh analysis
 // ═══════════════════════════════════════════════════════════════════════════
 
-const PRED_STORE_KEY = 'lotto_predictions_v3';
+const PRED_STORE_KEY = 'lotto_predictions_v5';
 
 function getPHDateStr() {
   const ph = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
@@ -983,32 +1050,65 @@ function extractPcsoHistory(html, limit) {
       const nums = parseNumbers(cells[3].textContent.trim());
       if (nums) hist.push(nums);
     }
-    if (hist.length >= 3) break;
+    if (hist.length >= limit) break;
   }
   return hist;
 }
 
-// Core: weighted frequency analysis + hot-streak boost → prediction + confidence
-function buildPrediction(history) {
-  const today     = getPHDateStr();
-  const seedInt   = parseInt(today.replace(/-/g, '')) % 1000;
+// ─────────────────────────────────────────────────────────────────────────────
+//  Core prediction engine — parameterized per game so SW and STL are
+//  structurally independent and will always produce different numbers.
+//
+//  gameKey  : 'sw' | 'stl'  — used to derive a unique seed offset
+//  history  : [[d0,d1,d2], ...]  — ordered newest-first
+//  opts     : override defaults per game
+// ─────────────────────────────────────────────────────────────────────────────
+function buildPrediction(history, gameKey, opts) {
+  opts = opts || {};
+  const DECAY      = opts.decay      || 0.05;
+  const HOT_WINDOW = opts.hotWindow  || 5;
+  const HOT_BOOST  = opts.hotBoost   || 0.25;
 
-  // Fallback when no history available: day-seeded deterministic output
-  if (!history || history.length < 5) {
-    return {
-      digits:     [String(seedInt % 10), String(Math.floor(seedInt/10) % 10), String(Math.floor(seedInt/100) % 10)],
-      confidence: 38
-    };
+  const today   = getPHDateStr();
+  const baseInt = parseInt(today.replace(/-/g, ''), 10);
+
+  // Each game gets its own unique seed so fallbacks always differ
+  const GAME_OFFSETS = { sw: 137, stl: 491 };
+  const offset  = GAME_OFFSETS[gameKey] || 0;
+  const seedInt = (baseInt + offset) % 1000;
+
+  // ── Unique-digit helper ──────────────────────────────────────────────────
+  function pickUniqueDigits(ranked) {
+    const chosen = [];
+    const used   = new Set();
+    for (let pos = 0; pos < 3; pos++) {
+      let pick = null;
+      for (const { d } of ranked[pos]) {
+        if (!used.has(d)) { pick = d; break; }
+      }
+      if (pick === null) pick = ranked[pos][0].d; // last resort (extremely rare)
+      used.add(pick);
+      chosen.push(String(pick));
+    }
+    return chosen;
   }
 
-  const DECAY      = 0.05;   // exponential decay per draw step back
-  const HOT_WINDOW = 5;      // how many recent draws count as "hot"
-  const HOT_BOOST  = 0.25;   // fraction extra weight for hot digits
+  // ── Fallback when no / sparse history ───────────────────────────────────
+  if (!history || history.length < 5) {
+    // Build 3 unique digits from the game-specific seed
+    const pool = [];
+    const used = new Set();
+    for (let step = 0; pool.length < 3; step++) {
+      const d = (seedInt + step * 37) % 10;  // 37 is coprime to 10 → cycles all 10
+      if (!used.has(d)) { used.add(d); pool.push(String(d)); }
+    }
+    return { digits: pool, confidence: 38 };
+  }
 
-  // freq[position 0-2][digit 0-9] = cumulative weighted score
+  // ── Weighted-frequency analysis ──────────────────────────────────────────
   const freq = [new Array(10).fill(0), new Array(10).fill(0), new Array(10).fill(0)];
 
-  // Pass 1: recency-weighted base scores (newest draw = index 0, highest weight)
+  // Pass 1 — recency-decayed base scores
   history.forEach((draw, idx) => {
     const w = Math.exp(-DECAY * idx);
     draw.forEach((digit, pos) => {
@@ -1017,7 +1117,7 @@ function buildPrediction(history) {
     });
   });
 
-  // Pass 2: hot-streak bonus for digits in the last HOT_WINDOW draws
+  // Pass 2 — hot-streak bonus for the most recent HOT_WINDOW draws
   history.slice(0, HOT_WINDOW).forEach((draw, idx) => {
     const w = Math.exp(-DECAY * idx) * HOT_BOOST;
     draw.forEach((digit, pos) => {
@@ -1026,24 +1126,18 @@ function buildPrediction(history) {
     });
   });
 
-  // Pick top digit at each position
-  const digits = freq.map(posFreq => {
-    let best = 0, bestScore = -Infinity;
-    posFreq.forEach((score, d) => { if (score > bestScore) { bestScore = score; best = d; } });
-    return String(best);
-  });
+  // Rank digits per position (highest score first)
+  const ranked = freq.map(posFreq =>
+    posFreq.map((score, d) => ({ d, score })).sort((a, b) => b.score - a.score)
+  );
 
-  // Confidence: how much does the winner outperform a flat distribution?
-  // Total decay weight across all draws in the history
+  const digits = pickUniqueDigits(ranked);
+
+  // ── Confidence score ─────────────────────────────────────────────────────
   const totalW   = history.reduce((acc, _, i) => acc + Math.exp(-DECAY * i), 0);
-  const uniformW = totalW / 10;  // expected score per digit if truly uniform
-
-  // Average ratio of winner's score to uniform across the 3 positions
-  const avgRatio = freq.reduce((sum, posFreq, pi) => {
-    return sum + posFreq[parseInt(digits[pi], 10)] / uniformW;
-  }, 0) / 3;
-
-  // Map: ratio 1.0 → 38%, ratio 1.5 → 52%, ratio 2.0+ → 70% (capped)
+  const uniformW = totalW / 10;
+  const avgRatio = freq.reduce((sum, posFreq, pi) =>
+    sum + posFreq[parseInt(digits[pi], 10)] / uniformW, 0) / 3;
   const confidence = Math.round(Math.min(70, Math.max(38, 38 + (avgRatio - 1.0) * 32)));
 
   return { digits, confidence };
@@ -1059,6 +1153,7 @@ function renderPredictions(sw, stl) {
       <div class="pred-panel-header">
         <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
         <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+        <button class="pred-regen-btn" onclick="regenPredictions()" title="Generate fresh prediction">↻ New Prediction</button>
       </div>
       <div style="padding:28px 24px;text-align:center;color:var(--muted);font-size:13px;">
         Insufficient historical data — predictions unavailable today.
@@ -1077,6 +1172,7 @@ function renderPredictions(sw, stl) {
     <div class="pred-panel-header">
       <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
       <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+      <button class="pred-regen-btn" onclick="regenPredictions()" title="Generate fresh prediction">↻ New Prediction</button>
     </div>
     <div class="pred-cols">
       <div class="pred-col">
@@ -1119,6 +1215,16 @@ function renderPredictions(sw, stl) {
   });
 }
 
+// Clear cache and regenerate fresh prediction
+async function regenPredictions() {
+  try { localStorage.removeItem(PRED_STORE_KEY); } catch(e) {}
+  if (window._lastMisorHtml !== undefined) {
+    await runDailyPredictions(window._lastMisorHtml);
+  } else {
+    loadAll();
+  }
+}
+
 // Orchestrate: check cache → fetch history if needed → analyse → render
 async function runDailyPredictions(misorHtml) {
   // Use cached prediction if still valid for today
@@ -1152,11 +1258,19 @@ async function runDailyPredictions(misorHtml) {
     console.warn('[Pred] Swertres history unavailable — using seed fallback', e.message);
   }
 
-  const sw  = buildPrediction(swHistory);
-  const stl = buildPrediction(stlHistory);
+  // Swertres — slightly longer memory, smaller hot-window
+  const sw  = buildPrediction(swHistory,  'sw',  { decay: 0.04, hotWindow: 6, hotBoost: 0.20 });
+  // STL — faster decay (recent draws weighted more heavily), larger hot-boost
+  const stl = buildPrediction(stlHistory, 'stl', { decay: 0.07, hotWindow: 4, hotBoost: 0.35 });
 
   savePred(sw, stl);
   renderPredictions(sw, stl);
+}
+
+// ── DROPDOWN ──────────────────────────────────────────────────
+function toggleDropdown() {
+  document.getElementById('dropdownToggle').classList.toggle('open');
+  document.getElementById('dropdownContent').classList.toggle('open');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1187,6 +1301,7 @@ async function loadAll() {
   const stlJob = fetchHTML(MISOR_URL)
     .then(html => {
       misorHtmlSnapshot = html;   // save for prediction engine
+      window._lastMisorHtml = html; // also expose for regenPredictions
       renderSTL(parseSTL(html));
     })
     .catch(err => {
@@ -1220,6 +1335,40 @@ loadAll();
 
 // Auto-refresh every 5 min — predictions always read from localStorage cache
 setInterval(loadAll, 5 * 60 * 1000);
+
+function buildComboPrediction(history) {
+  const comboScores = {};
+
+  history.forEach((draw, idx) => {
+    const combo = draw.join('');
+    const weight = Math.exp(-0.05 * idx);
+
+    comboScores[combo] = (comboScores[combo] || 0) + weight;
+  });
+
+  // pick best combo
+  let bestCombo = '000';
+  let bestScore = -Infinity;
+
+  for (const combo in comboScores) {
+    if (comboScores[combo] > bestScore) {
+      bestScore = comboScores[combo];
+      bestCombo = combo;
+    }
+  }
+
+  return {
+    digits: bestCombo.split(''),
+    confidence: 50
+  };
+}
+
+function classifyPattern(digits) {
+  const set = new Set(digits);
+  if (set.size === 1) return 'triple';
+  if (set.size === 2) return 'double';
+  return 'unique';
+}
 </script>
 </body>
 </html>
