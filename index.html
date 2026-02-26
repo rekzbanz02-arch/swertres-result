@@ -1244,9 +1244,103 @@
 //  CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-const PROXY        = 'https://api.allorigins.win/get?url=';
 const SWERTRES_URL = 'https://www.lottopcso.com/swertres-result-today/';
 const MISOR_URL    = 'https://www.pcsodraw.com/stl/swer3-misor-results/';
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  RACING PROXY SYSTEM
+//  Three proxies fire simultaneously — first valid response wins.
+//  Failed / slow proxies are silently dropped.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Each proxy entry: { build(url) → fetch URL, extract(json) → html string }
+const PROXIES = [
+  {
+    name: 'allorigins',
+    build: u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    extract: d => d.contents || null,
+  },
+  {
+    name: 'corsproxy.io',
+    build: u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+    extract: d => (typeof d === 'string' ? d : null),   // returns raw HTML text
+  },
+  {
+    name: 'htmldriven',
+    build: u => `https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(u)}`,
+    extract: d => d.body || null,
+  },
+];
+
+// Per-proxy runtime stats — track successes so the winner gets priority next time
+const _proxyStats = {};
+PROXIES.forEach(p => { _proxyStats[p.name] = { wins: 0, fails: 0, lastMs: 999 }; });
+
+// Fetch from a single proxy with a hard 8-second timeout
+async function _fetchViaProxy(proxy, url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const res = await fetch(proxy.build(url), { signal: controller.signal });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    // corsproxy.io returns raw HTML; others return JSON
+    let html;
+    const ct = res.headers.get('content-type') || '';
+    if (ct.includes('application/json')) {
+      const data = await res.json();
+      html = proxy.extract(data);
+    } else {
+      const text = await res.text();
+      // Try JSON parse first, fall back to treating as raw HTML
+      try { const data = JSON.parse(text); html = proxy.extract(data); }
+      catch { html = text.length > 200 ? text : null; }
+    }
+    if (!html || html.length < 200) throw new Error('Empty or tiny response');
+    return html;
+  } catch (e) {
+    clearTimeout(timer);
+    throw e;
+  }
+}
+
+// Race all proxies — returns first successful HTML, records winner stats
+async function fetchHTML(url) {
+  const t0 = Date.now();
+
+  // Sort proxies: fewest fails first, then fastest average
+  const ordered = [...PROXIES].sort((a, b) => {
+    const sa = _proxyStats[a.name], sb = _proxyStats[b.name];
+    if (sa.fails !== sb.fails) return sa.fails - sb.fails;
+    return sa.lastMs - sb.lastMs;
+  });
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    let remaining = ordered.length;
+
+    ordered.forEach(proxy => {
+      _fetchViaProxy(proxy, url)
+        .then(html => {
+          if (settled) return;
+          settled = true;
+          const ms = Date.now() - t0;
+          _proxyStats[proxy.name].wins++;
+          _proxyStats[proxy.name].lastMs = ms;
+          console.log(`[Proxy] ✓ ${proxy.name} won in ${ms}ms for ${url.split('/').pop()}`);
+          resolve(html);
+        })
+        .catch(err => {
+          _proxyStats[proxy.name].fails++;
+          console.warn(`[Proxy] ✗ ${proxy.name} failed:`, err.message);
+          remaining--;
+          if (!settled && remaining === 0) {
+            reject(new Error(`All proxies failed for: ${url}`));
+          }
+        });
+    });
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  UI HELPERS
@@ -1261,13 +1355,6 @@ function updateDateDisplay() {
   const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric', timeZone:'Asia/Manila' };
   document.getElementById('dateDisplay').textContent =
     new Date().toLocaleDateString('en-PH', opts) + ' · Philippine Standard Time';
-}
-
-async function fetchHTML(url) {
-  const res  = await fetch(PROXY + encodeURIComponent(url));
-  const data = await res.json();
-  if (!data.contents) throw new Error('Empty proxy response: ' + url);
-  return data.contents;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
