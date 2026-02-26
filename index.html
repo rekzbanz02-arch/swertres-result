@@ -629,6 +629,376 @@
     color: var(--gold);
     text-align: center;
   }
+
+  /* ════════════════════════════════════════════════════
+     DRAW HISTORY SECTION
+  ════════════════════════════════════════════════════ */
+  .history-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 600px) {
+    .history-grid { grid-template-columns: 1fr; }
+  }
+
+  .hist-panel {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.15s forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .hist-panel-header {
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .hist-panel-header:hover { background: rgba(255,255,255,0.03); }
+
+  .hist-panel.sw-hist .hist-panel-header {
+    background: rgba(245,197,24,0.05);
+    border-bottom: 1px solid rgba(245,197,24,0.12);
+  }
+  .hist-panel.stl-hist .hist-panel-header {
+    background: rgba(26,86,219,0.06);
+    border-bottom: 1px solid rgba(26,86,219,0.14);
+  }
+
+  .hist-panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+  }
+  .hist-panel.sw-hist  .hist-panel-title { color: var(--gold); }
+  .hist-panel.stl-hist .hist-panel-title { color: #7EB3FF; }
+
+  .hist-panel-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+  .hist-arrow {
+    font-size: 11px;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .hist-panel.open .hist-arrow { transform: rotate(180deg); }
+
+  .hist-body {
+    display: none;
+    max-height: 360px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .hist-body::-webkit-scrollbar { width: 4px; }
+  .hist-body::-webkit-scrollbar-track { background: transparent; }
+  .hist-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  .hist-panel.open .hist-body { display: block; }
+
+  .hist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--card-border);
+    transition: background 0.15s;
+  }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-row:hover { background: rgba(255,255,255,0.03); }
+
+  .hist-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .hist-draw-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(122,144,176,0.7);
+    min-width: 68px;
+    flex-shrink: 0;
+  }
+  .hist-nums {
+    display: flex;
+    gap: 5px;
+    flex: 1;
+  }
+  .hist-ball {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: #fff;
+  }
+  .hist-ball.sw-ball {
+    background: linear-gradient(145deg, #3a2400, #1e1200);
+    border: 1.5px solid rgba(245,197,24,0.35);
+  }
+  .hist-ball.stl-ball {
+    background: linear-gradient(145deg, #0a1e48, #060f28);
+    border: 1.5px solid rgba(26,86,219,0.45);
+  }
+  .hist-ball.pending-ball {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px dashed rgba(255,255,255,0.12);
+    color: var(--muted);
+    font-size: 10px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .hist-loading {
+    padding: 20px 18px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .hist-empty {
+    padding: 20px 18px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* ════════════════════════════════════════════════════
+     DATE SEARCH SECTION
+  ════════════════════════════════════════════════════ */
+  .search-panel {
+    margin-top: 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.25s forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .search-header {
+    padding: 13px 20px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .search-header-icon { font-size: 14px; }
+  .search-header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    color: var(--text);
+  }
+  .search-header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .search-controls {
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 130px;
+  }
+  .search-field label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .search-field input[type="date"] {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+    color-scheme: dark;
+  }
+  .search-field input[type="date"]:focus {
+    border-color: rgba(26,86,219,0.5);
+  }
+
+  .search-type-toggle {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .search-type-btn {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: 7px 13px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .search-type-btn.active {
+    background: rgba(26,86,219,0.15);
+    border-color: rgba(26,86,219,0.4);
+    color: #7EB3FF;
+  }
+  .search-type-btn:hover:not(.active) { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+  .search-btn {
+    background: rgba(26,86,219,0.2);
+    border: 1px solid rgba(26,86,219,0.4);
+    color: #7EB3FF;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .search-btn:hover { background: rgba(26,86,219,0.35); color: #fff; }
+
+  .search-clear-btn {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .search-clear-btn:hover { color: var(--text); border-color: rgba(229,62,62,0.4); }
+
+  .search-results-wrap {
+    padding: 0;
+  }
+  .search-results-header {
+    padding: 10px 20px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .search-count {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: rgba(26,86,219,0.9);
+    font-weight: 600;
+  }
+
+  .search-results-body {
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .search-results-body::-webkit-scrollbar { width: 4px; }
+  .search-results-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .search-result-group {
+    border-bottom: 1px solid var(--card-border);
+  }
+  .search-result-group:last-child { border-bottom: none; }
+
+  .search-result-date-row {
+    padding: 8px 20px 6px;
+    background: rgba(255,255,255,0.02);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .search-result-date-badge {
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+  .search-result-date-badge.sw-badge { background: rgba(245,197,24,0.12); color: var(--gold); }
+  .search-result-date-badge.stl-badge { background: rgba(26,86,219,0.15); color: #7EB3FF; }
+
+  .search-result-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s;
+  }
+  .search-result-row:last-child { border-bottom: none; }
+  .search-result-row:hover { background: rgba(255,255,255,0.03); }
+
+  .search-result-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 68px;
+    flex-shrink: 0;
+  }
+  .search-result-nums { display: flex; gap: 5px; }
+
+  .search-no-results {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .search-no-results .icon { font-size: 32px; margin-bottom: 10px; }
+  .search-placeholder {
+    padding: 30px 20px;
+    text-align: center;
+    color: rgba(122,144,176,0.5);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
 </style>
 </head>
 <body>
@@ -784,6 +1154,78 @@
           <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       DRAW HISTORY SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:36px;">
+    <h2>Draw History</h2>
+    <div class="badge" style="background:rgba(122,144,176,0.15);color:var(--muted);border:1px solid var(--card-border);">Last 30 Days</div>
+    <hr>
+  </div>
+
+  <div class="history-grid">
+    <div class="hist-panel sw-hist" id="swHistPanel">
+      <div class="hist-panel-header" onclick="toggleHistPanel('swHistPanel')">
+        <div>
+          <div class="hist-panel-title">Swertres 3D</div>
+          <div class="hist-panel-sub">2PM · 5PM · 9PM draws</div>
+        </div>
+        <span class="hist-arrow">▼</span>
+      </div>
+      <div class="hist-body" id="swHistBody">
+        <div class="hist-loading">Loading history…</div>
+      </div>
+    </div>
+    <div class="hist-panel stl-hist" id="stlHistPanel">
+      <div class="hist-panel-header" onclick="toggleHistPanel('stlHistPanel')">
+        <div>
+          <div class="hist-panel-title">STL Hexaprime Inc.</div>
+          <div class="hist-panel-sub">10:30AM · 3PM · 8PM draws</div>
+        </div>
+        <span class="hist-arrow">▼</span>
+      </div>
+      <div class="hist-body" id="stlHistBody">
+        <div class="hist-loading">Loading history…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       DATE SEARCH SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:36px;">
+    <h2>Search By Date</h2>
+    <div class="badge" style="background:rgba(26,86,219,0.15);color:#7EB3FF;border:1px solid rgba(26,86,219,0.25);">3D &amp; STL</div>
+    <hr>
+  </div>
+
+  <div class="search-panel">
+    <div class="search-header">
+      <span class="search-header-icon">🔍</span>
+      <span class="search-header-title">Date Range Search</span>
+      <span class="search-header-sub">Single date or date range</span>
+    </div>
+    <div class="search-controls">
+      <div class="search-type-toggle">
+        <button class="search-type-btn active" id="btnSingle" onclick="setSearchMode('single')">Single Date</button>
+        <button class="search-type-btn" id="btnRange" onclick="setSearchMode('range')">Date Range</button>
+      </div>
+      <div class="search-field">
+        <label id="searchFromLabel">Select Date</label>
+        <input type="date" id="searchFrom" onchange="onSearchDateChange()">
+      </div>
+      <div class="search-field" id="searchToField" style="display:none;">
+        <label>End Date</label>
+        <input type="date" id="searchTo" onchange="onSearchDateChange()">
+      </div>
+      <button class="search-btn" onclick="runSearch()">Search</button>
+      <button class="search-clear-btn" onclick="clearSearch()">✕ Clear</button>
+    </div>
+    <div class="search-results-wrap" id="searchResultsWrap">
+      <div class="search-placeholder">Enter a date above and press Search to view results.</div>
     </div>
   </div>
 
@@ -1324,6 +1766,9 @@ async function loadAll() {
     console.error('[Predictions]', err);
     renderPredictions(null, null);
   });
+
+  // ── History — loads after live data is done; MISOR snapshot is now available ──
+  loadHistory().catch(err => console.warn('[History]', err));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1369,6 +1814,512 @@ function classifyPattern(digits) {
   if (set.size === 2) return 'double';
   return 'unique';
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW HISTORY ENGINE
+//  Fetches 30-day history for Swertres (lottopcso) and STL (pcsodraw)
+//  Stores in window._historyData = { sw: [...], stl: [...] }
+//  Each entry: { dateKey: 'YYYY-MM-DD', dateLabel: 'Feb 26', draws: [{time, nums}] }
+// ═══════════════════════════════════════════════════════════════════════════
+
+const HIST_STORE_KEY = 'draw_history_v2';
+window._historyData  = { sw: [], stl: [] };
+let   _searchMode    = 'single';   // 'single' | 'range'
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+// Convert a Date → 'YYYY-MM-DD' in PHT
+function dateToPHKey(d) {
+  const ph = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+  return `${ph.getFullYear()}-${String(ph.getMonth()+1).padStart(2,'0')}-${String(ph.getDate()).padStart(2,'0')}`;
+}
+
+// Convert 'YYYY-MM-DD' → friendly label: 'Feb 26'
+function keyToShortLabel(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[m-1]} ${d}, ${y}`;
+}
+
+// Save / load history cache (expires after 30 min to stay fresh)
+function saveHistCache(data) {
+  try {
+    localStorage.setItem(HIST_STORE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch(e) {}
+}
+function loadHistCache() {
+  try {
+    const raw = localStorage.getItem(HIST_STORE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (Date.now() - obj.ts > 30 * 60 * 1000) return null; // stale after 30 min
+    return obj.data;
+  } catch(e) { return null; }
+}
+
+// ── Parse Swertres history from lottopcso ────────────────────────────────────
+// Robust parser: handles any table structure on the page.
+// Strategy 1 — wide table: first col = date, remaining cols = draw results (2PM/5PM/9PM)
+// Strategy 2 — tall table: rows contain date labels and time|result pairs
+// Strategy 3 — flat scan: any row with a parseable date + at least one valid 3-digit result
+function parseSwertresHistory(html) {
+  const doc    = new DOMParser().parseFromString(html, 'text/html');
+  const today  = getPHDateStr();
+  const todayPH  = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+  const cutoffPH = new Date(todayPH);
+  cutoffPH.setDate(cutoffPH.getDate() - 30);
+  const cutKey  = dateToPHKey(cutoffPH);
+
+  const MONTHS = { january:0,february:1,march:2,april:3,may:4,june:5,
+                   july:6,august:7,september:8,october:9,november:10,december:11,
+                   jan:0,feb:1,mar:2,apr:3,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+
+  function parseDateKey(raw) {
+    if (!raw) return null;
+    const t = raw.trim();
+    // ISO: 2026-02-26
+    let m = t.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+    // MM/DD/YYYY
+    m = t.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    // "February 26, 2026" or "Feb 26 2026" or "February 26 2026"
+    m = t.match(/([A-Za-z]+)\s+(\d{1,2}),?\s*(\d{4})/);
+    if (m) {
+      const mo = MONTHS[m[1].toLowerCase()];
+      if (mo !== undefined) return `${m[3]}-${String(mo+1).padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    }
+    // "26 February 2026"
+    m = t.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+    if (m) {
+      const mo = MONTHS[m[2].toLowerCase()];
+      if (mo !== undefined) return `${m[3]}-${String(mo+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    }
+    return null;
+  }
+
+  function inRange(key) {
+    return key && key >= cutKey && key <= today;
+  }
+
+  const byDate = {};   // dateKey → { dateKey, dateLabel, draws: [{time, nums}] }
+
+  function addDraw(dateKey, time, nums) {
+    if (!inRange(dateKey)) return;
+    if (!byDate[dateKey]) byDate[dateKey] = { dateKey, dateLabel: keyToShortLabel(dateKey), draws: [] };
+    const entry = byDate[dateKey];
+    if (!entry.draws.find(d => d.time === time)) {
+      entry.draws.push({ time, nums });
+    }
+  }
+
+  const DRAW_TIMES = ['2:00 PM', '5:00 PM', '9:00 PM'];
+
+  for (const table of doc.querySelectorAll('table')) {
+    if (table.rows.length < 2) continue;
+    const rows = Array.from(table.rows);
+    const hdr  = rows[0].textContent.toLowerCase();
+
+    // ── Strategy 1: wide table — Date | result | result | result ──────────
+    // Header contains a date-like word and multiple time/result-like columns
+    const looksWide = /date|draw/.test(hdr);
+    if (looksWide) {
+      // Find which column indices map to which draw times
+      // Look for time labels in header cells: "2:00 PM", "5:00", "9:00", or ordinals
+      const headerCells = Array.from(rows[0].cells).map(c => c.textContent.trim().toLowerCase());
+      let timeCols = [];
+      headerCells.forEach((h, idx) => {
+        if (/2.?00|2pm|first|1st/.test(h))  timeCols.push({ idx, time: '2:00 PM' });
+        if (/5.?00|5pm|second|2nd/.test(h)) timeCols.push({ idx, time: '5:00 PM' });
+        if (/9.?00|9pm|third|3rd/.test(h))  timeCols.push({ idx, time: '9:00 PM' });
+      });
+      // Fallback: assume cols 1,2,3 are the three draws
+      if (timeCols.length === 0 && headerCells.length >= 4) {
+        timeCols = [
+          { idx: 1, time: '2:00 PM' },
+          { idx: 2, time: '5:00 PM' },
+          { idx: 3, time: '9:00 PM' },
+        ];
+      }
+
+      for (let r = 1; r < rows.length; r++) {
+        const cells = Array.from(rows[r].cells);
+        if (cells.length < 2) continue;
+        const dateKey = parseDateKey(cells[0].textContent);
+        if (!dateKey) continue;
+        for (const { idx, time } of timeCols) {
+          if (idx >= cells.length) continue;
+          const nums = parseNumbers(cells[idx].textContent.trim());
+          if (nums) addDraw(dateKey, time, nums);
+        }
+      }
+    }
+
+    // ── Strategy 2: tall table — alternating date rows and draw rows ───────
+    // Some rows are pure date labels, others have time+result
+    {
+      let curDate = null;
+      for (let r = 0; r < rows.length; r++) {
+        const cells = Array.from(rows[r].cells);
+        const rowText = rows[r].textContent.trim();
+
+        // Try to detect a "date only" row (1-2 cells, no digits that look like results)
+        const dk = parseDateKey(rowText);
+        if (dk) { curDate = dk; continue; }
+
+        // Try date in first cell, then time/result in remaining cells
+        if (cells.length >= 2) {
+          const firstCellDate = parseDateKey(cells[0].textContent);
+          if (firstCellDate) {
+            curDate = firstCellDate;
+            // remaining cells might have time + result
+            for (let c = 1; c < cells.length; c++) {
+              const nums = parseNumbers(cells[c].textContent.trim());
+              if (nums) {
+                const time = DRAW_TIMES[c-1] || DRAW_TIMES[2];
+                addDraw(curDate, time, nums);
+              }
+            }
+            continue;
+          }
+        }
+
+        if (!curDate) continue;
+
+        // Row with time in first cell and result in second
+        if (cells.length >= 2) {
+          const timeText = cells[0].textContent.trim();
+          if (/[ap]m/i.test(timeText)) {
+            let h = parseInt(timeText);
+            if (/pm/i.test(timeText) && h < 12) h += 12;
+            // Map to standard draw time
+            let drawTime = DRAW_TIMES[2]; // default 9pm
+            if (h <= 15) drawTime = '2:00 PM';
+            else if (h <= 18) drawTime = '5:00 PM';
+            const nums = parseNumbers(cells[1].textContent.trim());
+            if (nums) addDraw(curDate, drawTime, nums);
+          }
+        }
+      }
+    }
+
+    // ── Strategy 3: flat scan — any row with date + number combo ──────────
+    // For pages where date and result are in same row or mixed layouts
+    for (let r = 0; r < rows.length; r++) {
+      const cells = Array.from(rows[r].cells);
+      if (cells.length < 2) continue;
+      let foundDate = null;
+      let foundNums = null;
+      let foundTime = null;
+      for (let c = 0; c < cells.length; c++) {
+        const txt = cells[c].textContent.trim();
+        if (!foundDate) { const k = parseDateKey(txt); if (k) { foundDate = k; continue; } }
+        if (!foundNums) { const n = parseNumbers(txt); if (n) { foundNums = n; continue; } }
+        if (!foundTime && /[ap]m/i.test(txt)) foundTime = txt;
+      }
+      if (foundDate && foundNums) {
+        const time = foundTime ? (() => {
+          let h = parseInt(foundTime);
+          if (/pm/i.test(foundTime) && h < 12) h += 12;
+          if (h <= 15) return '2:00 PM';
+          if (h <= 18) return '5:00 PM';
+          return '9:00 PM';
+        })() : '9:00 PM';
+        addDraw(foundDate, time, foundNums);
+      }
+    }
+  }
+
+  // Collect, sort draws per day, sort days newest-first
+  const arr = Object.values(byDate);
+  arr.forEach(e => {
+    e.draws.sort((a,b) => {
+      const order = { '2:00 PM': 0, '5:00 PM': 1, '9:00 PM': 2 };
+      return (order[a.time] ?? 3) - (order[b.time] ?? 3);
+    });
+  });
+  arr.sort((a,b) => b.dateKey.localeCompare(a.dateKey));
+  return arr;
+}
+
+// ── Parse STL history from pcsodraw ──────────────────────────────────────────
+// The MISOR page table: DrawID | MM/DD/YYYY | HH:MM | Result
+function parseSTLHistory(html) {
+  const doc     = new DOMParser().parseFromString(html, 'text/html');
+  const results = {};
+  const today   = getPHDateStr();
+  const todayPH  = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+  const cutoffPH = new Date(todayPH);
+  cutoffPH.setDate(cutoffPH.getDate() - 30);
+  const cutKey  = dateToPHKey(cutoffPH);
+
+  for (const table of doc.querySelectorAll('table')) {
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (rows.length < 3) continue;
+    if (!/Draw\s*ID/i.test(rows[0].textContent)) continue;
+
+    for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].querySelectorAll('td');
+      if (cells.length < 4) continue;
+
+      // cells[1] = MM/DD/YYYY
+      const rawDate = cells[1].textContent.trim();
+      const dm = rawDate.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (!dm) continue;
+      const dateKey = `${dm[3]}-${dm[1].padStart(2,'0')}-${dm[2].padStart(2,'0')}`;
+      if (dateKey > today) continue;
+      if (dateKey < cutKey) continue;
+
+      const time  = mapDrawTime(cells[2].textContent.trim());
+      const nums  = parseNumbers(cells[3].textContent.trim());
+      if (!results[dateKey]) {
+        results[dateKey] = { dateKey, dateLabel: keyToShortLabel(dateKey), draws: [] };
+      }
+      const entry = results[dateKey];
+      // Deduplicate by draw time
+      if (!entry.draws.find(d => d.time === time)) {
+        const hour = parseInt(cells[2].textContent.trim());
+        entry.draws.push({ time, nums, hour });
+      }
+    }
+    break;
+  }
+
+  // Sort draws per day by time, then sort days newest-first
+  const arr = Object.values(results);
+  arr.forEach(e => e.draws.sort((a,b) => (a.hour||0)-(b.hour||0)));
+  arr.sort((a,b) => b.dateKey.localeCompare(a.dateKey));
+  return arr;
+}
+
+// ── Render history body ───────────────────────────────────────────────────────
+function renderHistBody(containerId, entries, ballCls) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!entries || entries.length === 0) {
+    el.innerHTML = '<div class="hist-empty">No history data available.</div>';
+    return;
+  }
+  el.innerHTML = entries.map(entry => {
+    const rows = entry.draws.map(d => {
+      const balls = d.nums
+        ? d.nums.map(n => `<div class="hist-ball ${ballCls}">${n}</div>`).join('')
+        : `<div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div>`;
+      return `<div class="hist-row">
+        <div class="hist-date">${entry.dateLabel}</div>
+        <div class="hist-draw-time">${d.time}</div>
+        <div class="hist-nums">${balls}</div>
+      </div>`;
+    }).join('');
+    return rows;
+  }).join('');
+}
+
+// ── Toggle history panel open/closed ─────────────────────────────────────────
+// ── Toggle history panel open/closed ─────────────────────────────────────────
+function toggleHistPanel(panelId) {
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    // If data is ready, render immediately; otherwise a "Loading…" shows until loadHistory() finishes
+    if (window._histDataReady) {
+      if (panelId === 'swHistPanel') renderHistBody('swHistBody',  window._historyData.sw,  'sw-ball');
+      else                           renderHistBody('stlHistBody', window._historyData.stl, 'stl-ball');
+    }
+    // If not ready yet, loadHistory() will render when it completes (see below)
+  }
+}
+
+// ── Fetch & populate history data ────────────────────────────────────────────
+async function loadHistory() {
+  window._histDataReady = false;
+
+  // Try cache first
+  const cached = loadHistCache();
+  if (cached) {
+    window._historyData  = cached;
+    window._histDataReady = true;
+    _renderOpenPanels();
+    return;
+  }
+
+  // Fetch Swertres 30-day history page
+  try {
+    const swHtml = await fetchHTML('https://www.lottopcso.com/swertres-results-today-history-and-summary/');
+    window._historyData.sw = parseSwertresHistory(swHtml);
+    console.log('[History] SW entries:', window._historyData.sw.length);
+  } catch(e) {
+    console.warn('[History] Swertres history fetch failed:', e.message);
+    window._historyData.sw = [];
+  }
+
+  // STL history — use already-fetched MISOR snapshot if available (no extra request)
+  if (window._lastMisorHtml) {
+    window._historyData.stl = parseSTLHistory(window._lastMisorHtml);
+    console.log('[History] STL from snapshot:', window._historyData.stl.length, 'entries');
+  }
+
+  // If STL snapshot was empty or unavailable, fetch fresh
+  if (!window._historyData.stl || window._historyData.stl.length < 2) {
+    try {
+      const stlHtml = await fetchHTML(MISOR_URL);
+      window._historyData.stl = parseSTLHistory(stlHtml);
+      console.log('[History] STL fresh fetch:', window._historyData.stl.length, 'entries');
+    } catch(e) {
+      console.warn('[History] STL history fetch failed:', e.message);
+      window._historyData.stl = window._historyData.stl || [];
+    }
+  }
+
+  saveHistCache(window._historyData);
+  window._histDataReady = true;
+  _renderOpenPanels();
+}
+
+// Render any panels that are already open when data arrives
+function _renderOpenPanels() {
+  if (document.getElementById('swHistPanel').classList.contains('open'))
+    renderHistBody('swHistBody',  window._historyData.sw,  'sw-ball');
+  if (document.getElementById('stlHistPanel').classList.contains('open'))
+    renderHistBody('stlHistBody', window._historyData.stl, 'stl-ball');
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DATE SEARCH ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setSearchMode(mode) {
+  _searchMode = mode;
+  document.getElementById('btnSingle').classList.toggle('active', mode === 'single');
+  document.getElementById('btnRange').classList.toggle('active', mode === 'range');
+  document.getElementById('searchToField').style.display = mode === 'range' ? '' : 'none';
+  document.getElementById('searchFromLabel').textContent = mode === 'single' ? 'Select Date' : 'Start Date';
+  // Clear results when switching mode
+  clearSearch();
+}
+
+function onSearchDateChange() {
+  // Auto-set To date to From date when in single mode (keeps logic consistent)
+  if (_searchMode === 'single') {
+    const from = document.getElementById('searchFrom').value;
+    document.getElementById('searchTo').value = from;
+  }
+}
+
+function clearSearch() {
+  document.getElementById('searchFrom').value = '';
+  document.getElementById('searchTo').value   = '';
+  document.getElementById('searchResultsWrap').innerHTML =
+    '<div class="search-placeholder">Enter a date above and press Search to view results.</div>';
+}
+
+function runSearch() {
+  const fromVal = document.getElementById('searchFrom').value;
+  const toVal   = _searchMode === 'range'
+    ? document.getElementById('searchTo').value
+    : fromVal;
+
+  if (!fromVal) {
+    document.getElementById('searchResultsWrap').innerHTML =
+      '<div class="search-placeholder">Please select a date first.</div>';
+    return;
+  }
+  if (_searchMode === 'range' && !toVal) {
+    document.getElementById('searchResultsWrap').innerHTML =
+      '<div class="search-placeholder">Please select an end date for the range.</div>';
+    return;
+  }
+  if (fromVal > toVal) {
+    document.getElementById('searchResultsWrap').innerHTML =
+      '<div class="search-placeholder">Start date cannot be after end date.</div>';
+    return;
+  }
+
+  // Filter both datasets within the date range (inclusive)
+  const swMatches  = (window._historyData.sw  || []).filter(e => e.dateKey >= fromVal && e.dateKey <= toVal);
+  const stlMatches = (window._historyData.stl || []).filter(e => e.dateKey >= fromVal && e.dateKey <= toVal);
+
+  // Build unified list of all dates in range (so we show "no draw" dates too if there's any data)
+  const allDates = [...new Set([
+    ...swMatches.map(e => e.dateKey),
+    ...stlMatches.map(e => e.dateKey)
+  ])].sort((a,b) => b.localeCompare(a)); // newest first
+
+  const wrap = document.getElementById('searchResultsWrap');
+
+  if (allDates.length === 0) {
+    wrap.innerHTML = `
+      <div class="search-no-results">
+        <div class="icon">📭</div>
+        No results found for the selected date${_searchMode === 'range' ? ' range' : ''}.
+        <br><span style="font-size:11px;color:rgba(122,144,176,0.6);margin-top:6px;display:block;">
+          History covers the past 30 days only.
+        </span>
+      </div>`;
+    return;
+  }
+
+  const totalDraws = swMatches.reduce((s,e)=>s+e.draws.length,0)
+                   + stlMatches.reduce((s,e)=>s+e.draws.length,0);
+
+  let html = `
+    <div class="search-results-header">
+      <span>Results for ${fromVal === toVal ? keyToShortLabel(fromVal) : `${keyToShortLabel(fromVal)} — ${keyToShortLabel(toVal)}`}</span>
+      <span class="search-count">${totalDraws} draw${totalDraws !== 1 ? 's' : ''} · ${allDates.length} day${allDates.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div class="search-results-body">`;
+
+  for (const dateKey of allDates) {
+    const swEntry  = swMatches.find(e  => e.dateKey === dateKey);
+    const stlEntry = stlMatches.find(e => e.dateKey === dateKey);
+    const label    = keyToShortLabel(dateKey);
+
+    // Swertres group
+    if (swEntry && swEntry.draws.length > 0) {
+      html += `<div class="search-result-group">
+        <div class="search-result-date-row">
+          <span>${label}</span>
+          <span class="search-result-date-badge sw-badge">Swertres 3D</span>
+        </div>`;
+      for (const d of swEntry.draws) {
+        const balls = d.nums
+          ? d.nums.map(n => `<div class="hist-ball sw-ball">${n}</div>`).join('')
+          : `<div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div>`;
+        html += `<div class="search-result-row">
+          <div class="search-result-time">${d.time}</div>
+          <div class="search-result-nums">${balls}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    // STL group
+    if (stlEntry && stlEntry.draws.length > 0) {
+      html += `<div class="search-result-group">
+        <div class="search-result-date-row">
+          <span>${label}</span>
+          <span class="search-result-date-badge stl-badge">STL Hexaprime</span>
+        </div>`;
+      for (const d of stlEntry.draws) {
+        const balls = d.nums
+          ? d.nums.map(n => `<div class="hist-ball stl-ball">${n}</div>`).join('')
+          : `<div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div><div class="hist-ball pending-ball">–</div>`;
+        html += `<div class="search-result-row">
+          <div class="search-result-time">${d.time}</div>
+          <div class="search-result-nums">${balls}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+  }
+
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+// ── History is now triggered from inside loadAll() ───────────────────────────
 </script>
 </body>
 </html>
