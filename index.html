@@ -19,6 +19,15 @@
     --card: rgba(255,255,255,0.04);
     --card-border: rgba(255,255,255,0.08);
     --radius: 16px;
+
+    /* ── Zone accent colors ── */
+    --zone-sw:     #F5C518;   /* Swertres 3D  → gold  */
+    --zone-stl:    #1A56DB;   /* STL          → blue  */
+    --zone-pred:   #a259f7;   /* Predictions  → purple */
+    --zone-hit:    #22C55E;   /* Hit Tracker  → green */
+    --zone-hist:   #FB923C;   /* History      → orange */
+    --zone-search: #38BDF8;   /* Date Search  → sky   */
+    --zone-links:  #E53E3E;   /* Official links → red */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -138,7 +147,53 @@
   .refresh-btn:hover { background: var(--card); color: var(--text); border-color: var(--accent-blue); }
   .refresh-btn svg { width: 13px; height: 13px; }
 
-  /* ── Section Labels ── */
+  /* ══════════════════════════════════════════════════════
+     SECTION ZONES — clear visual boundaries per section
+  ══════════════════════════════════════════════════════ */
+
+  /* Generic zone container */
+  .zone {
+    position: relative;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 28px;
+  }
+
+  /* Left accent bar */
+  .zone::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 16px; bottom: 16px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--zone-color, rgba(255,255,255,0.15));
+    opacity: 0.8;
+  }
+
+  /* Outer glow ring */
+  .zone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 1px solid var(--zone-color, rgba(255,255,255,0.08));
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  /* Zone background tint */
+  .zone-sw    { --zone-color: var(--zone-sw);    background: linear-gradient(160deg, rgba(245,197,24,0.045) 0%, rgba(245,197,24,0.01) 60%, transparent 100%); }
+  .zone-stl   { --zone-color: var(--zone-stl);   background: linear-gradient(160deg, rgba(26,86,219,0.07)  0%, rgba(26,86,219,0.02)  60%, transparent 100%); }
+  .zone-pred  { --zone-color: var(--zone-pred);  background: linear-gradient(160deg, rgba(162,89,247,0.06) 0%, rgba(162,89,247,0.01) 60%, transparent 100%); }
+  .zone-hit   { --zone-color: var(--zone-hit);   background: linear-gradient(160deg, rgba(34,197,94,0.05)  0%, rgba(34,197,94,0.01)  60%, transparent 100%); }
+  .zone-hist  { --zone-color: var(--zone-hist);  background: linear-gradient(160deg, rgba(251,146,60,0.05) 0%, rgba(251,146,60,0.01) 60%, transparent 100%); }
+  .zone-search{ --zone-color: var(--zone-search);background: linear-gradient(160deg, rgba(56,189,248,0.05) 0%, rgba(56,189,248,0.01) 60%, transparent 100%); }
+  .zone-links { --zone-color: var(--zone-links); background: linear-gradient(160deg, rgba(229,62,62,0.04)  0%, rgba(229,62,62,0.01)  60%, transparent 100%); }
+
+  /* Zone inner padding reset for its children */
+  .zone > .section-label { margin-top: 0; }
+
+  /* ── Section Labels — now inherit zone color via data attribute ── */
   .section-label {
     display: flex;
     align-items: center;
@@ -161,14 +216,32 @@
     border-radius: 4px;
     text-transform: uppercase;
   }
-  .section-label .badge.stl  { background: #1A56DB; color: #fff; }
-  .section-label .badge.pred { background: rgba(245,197,24,0.15); color: var(--gold); border: 1px solid rgba(245,197,24,0.3); }
+  .section-label .badge.stl   { background: #1A56DB; color: #fff; }
+  .section-label .badge.pred  { background: rgba(162,89,247,0.18); color: #c084fc; border: 1px solid rgba(162,89,247,0.35); }
   .section-label hr { flex: 1; border: none; border-top: 1px solid var(--card-border); }
+
+  /* Zone-specific section label colors */
+  .zone-sw     .section-label h2 { color: var(--gold); }
+  .zone-stl    .section-label h2 { color: #7EB3FF; }
+  .zone-pred   .section-label h2 { color: #c084fc; }
+  .zone-hit    .section-label h2 { color: var(--green); }
+  .zone-hist   .section-label h2 { color: #FB923C; }
+  .zone-search .section-label h2 { color: #38BDF8; }
+  .zone-links  .section-label h2 { color: #F87171; }
+
+  /* Zone-specific hr tint */
+  .zone-sw     .section-label hr { border-top-color: rgba(245,197,24,0.2); }
+  .zone-stl    .section-label hr { border-top-color: rgba(26,86,219,0.3); }
+  .zone-pred   .section-label hr { border-top-color: rgba(162,89,247,0.2); }
+  .zone-hit    .section-label hr { border-top-color: rgba(34,197,94,0.2); }
+  .zone-hist   .section-label hr { border-top-color: rgba(251,146,60,0.2); }
+  .zone-search .section-label hr { border-top-color: rgba(56,189,248,0.2); }
+  .zone-links  .section-label hr { border-top-color: rgba(229,62,62,0.2); }
 
   /* ── Swertres Card ── */
   .swertres-card {
     background: var(--card);
-    border: 1px solid var(--card-border);
+    border: 1px solid rgba(245,197,24,0.18);
     border-radius: var(--radius);
     overflow: hidden;
     animation: fadeUp 0.5s ease forwards;
@@ -270,7 +343,7 @@
 
   .stl-card {
     background: var(--card);
-    border: 1px solid var(--card-border);
+    border: 1px solid rgba(26,86,219,0.22);
     border-radius: var(--radius);
     overflow: hidden;
     animation: fadeUp 0.5s ease forwards;
@@ -365,10 +438,10 @@
   ════════════════════════════════════════════════════ */
   .pred-panel {
     margin-top: 14px;
-    border: 1px solid rgba(245,197,24,0.2);
+    border: 1px solid rgba(162,89,247,0.28);
     border-radius: var(--radius);
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(245,197,24,0.03) 0%, rgba(26,86,219,0.04) 100%);
+    background: linear-gradient(135deg, rgba(162,89,247,0.04) 0%, rgba(26,86,219,0.04) 100%);
     animation: fadeUp 0.5s ease 0.2s forwards;
     opacity: 0;
     transform: translateY(16px);
@@ -382,14 +455,14 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 13px 22px;
-    background: rgba(245,197,24,0.05);
-    border-bottom: 1px solid rgba(245,197,24,0.12);
+    background: rgba(162,89,247,0.06);
+    border-bottom: 1px solid rgba(162,89,247,0.15);
   }
   .pred-panel-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 16px;
     letter-spacing: 2px;
-    color: var(--gold);
+    color: #c084fc;
   }
   .pred-panel-meta {
     font-family: 'DM Mono', monospace;
@@ -524,6 +597,300 @@
     opacity: 0.7;
   }
 
+  /* ════════════════════════════════════════════════════
+     SAVE TO JSONBIN BUTTON
+  ════════════════════════════════════════════════════ */
+  .pred-save-btn {
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pred-save-btn:hover { background: rgba(34,197,94,0.22); border-color: rgba(34,197,94,0.5); }
+  .pred-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pred-save-btn.saved { background: rgba(245,197,24,0.12); border-color: rgba(245,197,24,0.3); color: var(--gold); }
+  .pred-save-btn.saving { opacity: 0.6; }
+
+  .pred-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  /* ════════════════════════════════════════════════════
+     HIT TRACKER / SAVED PREDICTIONS PANEL
+  ════════════════════════════════════════════════════ */
+  .hit-panel {
+    margin-top: 14px;
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(34,197,94,0.03) 0%, rgba(26,86,219,0.03) 100%);
+    animation: fadeUp 0.5s ease 0.3s forwards;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .hit-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 13px 22px;
+    background: rgba(34,197,94,0.05);
+    border-bottom: 1px solid rgba(34,197,94,0.15);
+  }
+
+  .hit-panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--green);
+  }
+
+  .hit-panel-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .hit-refresh-btn {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .hit-refresh-btn:hover { background: rgba(34,197,94,0.2); }
+  .hit-refresh-btn.spinning svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hit-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .hit-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid transparent;
+  }
+  .hit-tab.active { color: var(--green); border-bottom-color: var(--green); background: rgba(34,197,94,0.04); }
+  .hit-tab:hover:not(.active) { color: var(--text); }
+
+  .hit-body {
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .hit-body::-webkit-scrollbar { width: 4px; }
+  .hit-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .hit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--card-border);
+    transition: background 0.15s;
+  }
+  .hit-row:last-child { border-bottom: none; }
+  .hit-row:hover { background: rgba(255,255,255,0.02); }
+
+  .hit-row-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hit-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  .hit-nums {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .hit-ball {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: #fff;
+  }
+  .hit-ball.sw-style {
+    background: linear-gradient(145deg, #5c3900, #321f00);
+    border: 1.5px solid rgba(245,197,24,0.4);
+  }
+  .hit-ball.stl-style {
+    background: linear-gradient(145deg, #0c2751, #060f24);
+    border: 1.5px solid rgba(26,86,219,0.4);
+  }
+
+  .hit-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .hit-badge.win {
+    background: rgba(34,197,94,0.15);
+    color: var(--green);
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+  .hit-badge.miss {
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border: 1px solid var(--card-border);
+  }
+  .hit-badge.pending {
+    background: rgba(245,197,24,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(245,197,24,0.25);
+  }
+
+  .hit-actual {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+    min-width: 90px;
+  }
+  .hit-actual-label {
+    font-size: 9px;
+    color: rgba(122,144,176,0.6);
+    font-family: 'DM Mono', monospace;
+  }
+  .hit-actual-nums { display: flex; gap: 4px; }
+  .hit-actual-ball {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed rgba(255,255,255,0.12);
+  }
+  .hit-actual-ball.matched {
+    color: var(--green);
+    background: rgba(34,197,94,0.1);
+    border-color: rgba(34,197,94,0.4);
+  }
+
+  .hit-empty {
+    padding: 32px 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .hit-empty .icon { font-size: 28px; margin-bottom: 10px; display: block; }
+
+  .hit-loading {
+    padding: 24px 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .hit-stats-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .hit-stat {
+    flex: 1;
+    padding: 10px 14px;
+    text-align: center;
+    border-right: 1px solid var(--card-border);
+  }
+  .hit-stat:last-child { border-right: none; }
+  .hit-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .hit-stat-val.green { color: var(--green); }
+  .hit-stat-lbl {
+    font-size: 9px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--mid-blue);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    z-index: 9999;
+    animation: slideUp 0.3s ease;
+    max-width: 280px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.success { border-color: rgba(34,197,94,0.4); }
+  .toast.error   { border-color: rgba(229,62,62,0.4); }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Error / Skeleton ── */
   .error-msg {
     text-align: center;
@@ -590,8 +957,8 @@
   .dropdown { margin-bottom: 16px; }
   .dropdown-toggle {
     width: 100%;
-    background: var(--card);
-    border: 1px solid var(--card-border);
+    background: rgba(245,197,24,0.04);
+    border: 1px solid rgba(245,197,24,0.18);
     border-radius: var(--radius);
     color: var(--muted);
     padding: 14px 20px;
@@ -606,12 +973,12 @@
     letter-spacing: 0.5px;
     transition: all 0.2s;
   }
-  .dropdown-toggle:hover { color: var(--text); border-color: rgba(79,142,247,0.3); }
+  .dropdown-toggle:hover { color: var(--text); border-color: rgba(245,197,24,0.38); background: rgba(245,197,24,0.07); }
   .dropdown-arrow { transition: transform 0.3s; }
   .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
   .dropdown-content {
-    background: var(--card);
-    border: 1px solid var(--card-border);
+    background: rgba(245,197,24,0.02);
+    border: 1px solid rgba(245,197,24,0.15);
     border-top: none;
     border-radius: 0 0 var(--radius) var(--radius);
     padding: 20px;
@@ -644,8 +1011,8 @@
   }
 
   .hist-panel {
-    background: var(--card);
-    border: 1px solid var(--card-border);
+    background: rgba(251,146,60,0.02);
+    border: 1px solid rgba(251,146,60,0.18);
     border-radius: var(--radius);
     overflow: hidden;
     animation: fadeUp 0.5s ease 0.15s forwards;
@@ -667,11 +1034,11 @@
 
   .hist-panel.sw-hist .hist-panel-header {
     background: rgba(245,197,24,0.05);
-    border-bottom: 1px solid rgba(245,197,24,0.12);
+    border-bottom: 1px solid rgba(245,197,24,0.15);
   }
   .hist-panel.stl-hist .hist-panel-header {
     background: rgba(26,86,219,0.06);
-    border-bottom: 1px solid rgba(26,86,219,0.14);
+    border-bottom: 1px solid rgba(26,86,219,0.18);
   }
 
   .hist-panel-title {
@@ -782,8 +1149,8 @@
   ════════════════════════════════════════════════════ */
   .search-panel {
     margin-top: 14px;
-    background: var(--card);
-    border: 1px solid var(--card-border);
+    background: rgba(56,189,248,0.02);
+    border: 1px solid rgba(56,189,248,0.2);
     border-radius: var(--radius);
     overflow: hidden;
     animation: fadeUp 0.5s ease 0.25s forwards;
@@ -793,8 +1160,8 @@
 
   .search-header {
     padding: 13px 20px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid var(--card-border);
+    background: rgba(56,189,248,0.05);
+    border-bottom: 1px solid rgba(56,189,248,0.15);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -804,7 +1171,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 15px;
     letter-spacing: 1.5px;
-    color: var(--text);
+    color: #38BDF8;
   }
   .search-header-sub {
     font-family: 'DM Mono', monospace;
@@ -1030,10 +1397,10 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
-  .sw-link  { border-color: rgba(245,197,24,0.2);  background: linear-gradient(135deg, rgba(245,197,24,0.05), var(--card)); }
-  .stl-link { border-color: rgba(26,86,219,0.25);  background: linear-gradient(135deg, rgba(26,86,219,0.07), var(--card)); }
-  .sw-link:hover  { border-color: rgba(245,197,24,0.45); background: linear-gradient(135deg, rgba(245,197,24,0.09), var(--card)); }
-  .stl-link:hover { border-color: rgba(26,86,219,0.45);  background: linear-gradient(135deg, rgba(26,86,219,0.12), var(--card)); }
+  .sw-link  { border-color: rgba(245,197,24,0.25);  background: linear-gradient(135deg, rgba(245,197,24,0.07), var(--card)); }
+  .stl-link { border-color: rgba(26,86,219,0.28);   background: linear-gradient(135deg, rgba(26,86,219,0.09), var(--card)); }
+  .sw-link:hover  { border-color: rgba(245,197,24,0.5); background: linear-gradient(135deg, rgba(245,197,24,0.12), var(--card)); }
+  .stl-link:hover { border-color: rgba(26,86,219,0.5);  background: linear-gradient(135deg, rgba(26,86,219,0.15), var(--card)); }
 
   .site-link-icon { font-size: 26px; flex-shrink: 0; }
 
@@ -1071,6 +1438,219 @@
   .sw-link:hover  .site-link-arrow { color: var(--gold);  transform: translate(2px,-2px); }
   .stl-link:hover .site-link-arrow { color: #7EB3FF; transform: translate(2px,-2px); }
 
+/* ── Prediction Zone Dropdowns ── */
+.pred-zone-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  margin-bottom: 0;
+  text-align: left;
+}
+.pred-zone-toggle .section-label {
+  margin: 0;
+  flex: 1;
+  pointer-events: none;
+}
+.pred-zone-arrow {
+  font-size: 13px;
+  color: var(--muted);
+  transition: transform 0.3s;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.pred-zone-toggle.open .pred-zone-arrow { transform: rotate(180deg); }
+
+.pred-zone-body {
+  display: none;
+  margin-top: 14px;
+}
+.pred-zone-body.open { display: block; }
+
+
+  /* ══════════════════════════════════════════════════════
+     HELP BUTTON & MODAL
+  ══════════════════════════════════════════════════════ */
+
+  .help-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .help-btn:hover {
+    background: rgba(245,197,24,0.12);
+    border-color: rgba(245,197,24,0.45);
+    color: var(--gold);
+    transform: scale(1.08);
+  }
+
+  .help-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,12,28,0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9000;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 40px;
+    overflow-y: auto;
+  }
+  .help-overlay.open { display: flex; }
+
+  .help-modal {
+    background: #0d1e3a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    overflow: hidden;
+    animation: helpIn 0.28s cubic-bezier(0.34,1.4,0.64,1) forwards;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    margin: auto;
+  }
+  @keyframes helpIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  }
+
+  .help-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(245,197,24,0.04);
+  }
+  .help-modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .help-close-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .help-close-btn:hover { background: rgba(229,62,62,0.15); border-color: rgba(229,62,62,0.4); color: #F87171; }
+
+  .help-modal-body {
+    padding: 6px 0 8px;
+    max-height: 75vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+  .help-modal-body::-webkit-scrollbar { width: 4px; }
+  .help-modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+  .help-section {
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .help-section:last-child { border-bottom: none; }
+
+  .help-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .help-content { flex: 1; min-width: 0; }
+  .help-section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
+  }
+  .help-section-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .help-section-desc strong { color: var(--text); font-weight: 600; }
+
+  .help-sw     .help-icon { background: rgba(245,197,24,0.1);  color: var(--gold);  }
+  .help-stl    .help-icon { background: rgba(26,86,219,0.14);  color: #7EB3FF;      }
+  .help-pred   .help-icon { background: rgba(162,89,247,0.12); color: #c084fc;      }
+  .help-hit    .help-icon { background: rgba(34,197,94,0.1);   color: var(--green); }
+  .help-hist   .help-icon { background: rgba(251,146,60,0.1);  color: #FB923C;      }
+  .help-search .help-icon { background: rgba(56,189,248,0.1);  color: #38BDF8;      }
+  .help-links  .help-icon { background: rgba(229,62,62,0.1);   color: #F87171;      }
+  .help-info   .help-icon { background: rgba(245,197,24,0.08); color: var(--gold);  }
+
+  .help-sw     .help-section-title { color: var(--gold);  }
+  .help-stl    .help-section-title { color: #7EB3FF;      }
+  .help-pred   .help-section-title { color: #c084fc;      }
+  .help-hit    .help-section-title { color: var(--green); }
+  .help-hist   .help-section-title { color: #FB923C;      }
+  .help-search .help-section-title { color: #38BDF8;      }
+  .help-links  .help-section-title { color: #F87171;      }
+  .help-info   .help-section-title { color: var(--gold);  }
+
+  .help-tips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+  }
+  .help-tip {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    color: var(--muted);
+  }
+
+  .help-modal-footer {
+    padding: 12px 22px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    color: rgba(122,144,176,0.5);
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+  }
 </style>
 </head>
 <body>
@@ -1098,219 +1678,285 @@
           </svg>
           Refresh
         </button>
+        <button class="help-btn" onclick="openHelp()" title="Help">?</button>
       </div>
     </div>
   </header>
 
-  <!-- Swertres 3D -->
-  <div class="section-label">
-    <h2>Swertres 3D Lotto</h2>
-    <div class="badge">Daily 2PM · 5PM · 9PM</div>
-    <hr>
-  </div>
-  <div id="swertresContainer">
-    <div class="swertres-card" style="opacity:1;transform:none;">
-      <div class="card-header" style="padding:16px 24px;">
-        <div class="card-header-left">
-          <div class="skeleton" style="width:200px;height:18px;margin-bottom:6px;"></div>
-          <div class="skeleton" style="width:120px;height:12px;"></div>
-        </div>
-      </div>
-      <div class="draw-rows">
-        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
-        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
-        <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
-      </div>
+  <!-- ═══════════════════ ZONE: SWERTRES 3D ═══════════════════ -->
+  <div class="zone zone-sw">
+    <div class="section-label">
+      <h2>Swertres 3D Lotto</h2>
+      <div class="badge">Daily 2PM · 5PM · 9PM</div>
+      <hr>
     </div>
-  </div>
-
-  <!-- STL Results -->
-  <div class="section-label" style="margin-top:36px;">
-    <h2>STL Misamis Oriental</h2>
-    <div class="badge stl">10:30AM · 3PM · 8PM</div>
-    <hr>
-  </div>
-  <div class="stl-grid" id="stlContainer">
-    <div class="stl-card" style="opacity:1;transform:none;">
-      <div class="card-header">
-        <div class="skeleton" style="width:140px;height:14px;margin-bottom:6px;"></div>
-        <div class="skeleton" style="width:80px;height:11px;"></div>
-      </div>
-      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
-      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
-      <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════
-       DAILY PREDICTIONS SECTION
-  ═══════════════════════════════════════════════════════ -->
-  <div class="section-label" style="margin-top:36px;">
-    <h2>Daily Predictions</h2>
-    <div class="badge pred">Pattern Analysis</div>
-    <hr>
-  </div>
-
-  <div class="pred-panel" id="predPanel">
-    <!-- skeleton while computing -->
-    <div class="pred-panel-header">
-      <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
-      <span class="pred-panel-meta">Generated once daily · Stored locally</span>
-      <button class="pred-regen-btn" onclick="regenPredictions()" title="Generate fresh prediction">↻ New Prediction</button>
-    </div>
-    <div class="pred-cols">
-      <div class="pred-col">
-        <div class="pred-col-label">Swertres (3D)</div>
-        <div class="pred-balls">
-          <div class="pred-ball ghost skeleton"></div>
-          <div class="pred-ball ghost skeleton"></div>
-          <div class="pred-ball ghost skeleton"></div>
+    <div id="swertresContainer">
+      <div class="swertres-card" style="opacity:1;transform:none;">
+        <div class="card-header" style="padding:16px 24px;">
+          <div class="card-header-left">
+            <div class="skeleton" style="width:200px;height:18px;margin-bottom:6px;"></div>
+            <div class="skeleton" style="width:120px;height:12px;"></div>
+          </div>
         </div>
-        <div class="pred-conf">
-          <span class="pred-conf-lbl">Confidence</span>
-          <div class="pred-track"><div class="pred-fill gold skeleton" style="width:55%"></div></div>
-          <span class="pred-pct gold">—</span>
-        </div>
-      </div>
-      <div class="pred-col">
-        <div class="pred-col-label">STL · Hexaprime Inc.</div>
-        <div class="pred-balls">
-          <div class="pred-ball ghost skeleton"></div>
-          <div class="pred-ball ghost skeleton"></div>
-          <div class="pred-ball ghost skeleton"></div>
-        </div>
-        <div class="pred-conf">
-          <span class="pred-conf-lbl">Confidence</span>
-          <div class="pred-track"><div class="pred-fill blue skeleton" style="width:48%"></div></div>
-          <span class="pred-pct blue">—</span>
-        </div>
-      </div>
-    </div>
-    <div class="pred-footer">
-      <div class="pred-tags">
-        <span class="pred-tag skeleton" style="width:85px;height:16px;border:none;"></span>
-        <span class="pred-tag skeleton" style="width:65px;height:16px;border:none;"></span>
-        <span class="pred-tag skeleton" style="width:75px;height:16px;border:none;"></span>
-      </div>
-    </div>
-    <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>
-  </div>
-
-  <!-- DROPDOWN INFO -->
-  <div class="dropdown">
-    <button class="dropdown-toggle" id="dropdownToggle" onclick="toggleDropdown()">
-      <span>💡 Swertres Information</span>
-      <span class="dropdown-arrow">▼</span>
-    </button>
-    <div class="dropdown-content" id="dropdownContent">
-      <!-- Info Bar -->
-      <div class="info-bar">
-        <div class="info-item">
-          <div class="label">Straight Play Prize</div>
-          <div class="value">₱4,500</div>
-          <div class="sub">per ₱12 play (exact order)</div>
-        </div>
-        <div class="info-item">
-          <div class="label">Rambolito 3 Prize</div>
-          <div class="value">₱1,500</div>
-          <div class="sub">2 same + 1 different digit</div>
-        </div>
-        <div class="info-item">
-          <div class="label">Rambolito 6 Prize</div>
-          <div class="value">₱750</div>
-          <div class="sub">3 different digits, any order</div>
-        </div>
-        <div class="info-item">
-          <div class="label">Draw Schedule</div>
-          <div class="value" style="font-size:13px;line-height:1.6;">Daily</div>
-          <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
+        <div class="draw-rows">
+          <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
+          <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
+          <div class="draw-row"><div class="draw-time skeleton" style="width:50px;height:14px;"></div><div class="number-balls"><div class="ball pending">–</div><div class="ball pending">–</div><div class="ball pending">–</div></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       DRAW HISTORY SECTION
-  ═══════════════════════════════════════════════════════ -->
-  <div class="section-label" style="margin-top:36px;">
-    <h2>Draw History</h2>
-    <div class="badge" style="background:rgba(122,144,176,0.15);color:var(--muted);border:1px solid var(--card-border);">Last 30 Days</div>
-    <hr>
+  <!-- ═══════════════════ ZONE: STL ═══════════════════ -->
+  <div class="zone zone-stl">
+    <div class="section-label" style="margin-top:0;">
+      <h2>STL Misamis Oriental</h2>
+      <div class="badge stl">10:30AM · 3PM · 8PM</div>
+      <hr>
+    </div>
+    <div class="stl-grid" id="stlContainer">
+      <div class="stl-card" style="opacity:1;transform:none;">
+        <div class="card-header">
+          <div class="skeleton" style="width:140px;height:14px;margin-bottom:6px;"></div>
+          <div class="skeleton" style="width:80px;height:11px;"></div>
+        </div>
+        <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+        <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+        <div class="stl-row"><div class="skeleton" style="width:100%;height:36px;border-radius:8px;"></div></div>
+      </div>
+    </div>
   </div>
 
-  <div class="history-grid">
-    <div class="hist-panel sw-hist" id="swHistPanel">
-      <div class="hist-panel-header" onclick="toggleHistPanel('swHistPanel')">
+  <!-- ═══════════════════ ZONE: PREDICTIONS ═══════════════════ -->
+  <!-- ═══════════════════ ZONE: PREDICTIONS ═══════════════════ -->
+<div class="zone zone-pred">
+  <button class="pred-zone-toggle" onclick="toggleZone('predZoneBody', this)">
+    <div class="section-label" style="margin-top:0;">
+      <h2>Daily Predictions</h2>
+      <div class="badge pred">Pattern Analysis</div>
+      <hr>
+    </div>
+    <span class="pred-zone-arrow">▼</span>
+  </button>
+
+  <div class="pred-zone-body" id="predZoneBody">
+    <div class="pred-panel" id="predPanel">
+      <!-- skeleton while computing -->
+      <div class="pred-panel-header">
+        <span class="pred-panel-title">TODAY'S PREDICTED NUMBERS</span>
+        <span class="pred-panel-meta">Generated once daily · Stored locally</span>
+        <button class="pred-regen-btn" onclick="regenPredictions()" title="Generate fresh prediction">↻ New Prediction</button>
+      </div>
+      <div class="pred-cols">
+        <div class="pred-col">
+          <div class="pred-col-label">Swertres (3D)</div>
+          <div class="pred-balls">
+            <div class="pred-ball ghost skeleton"></div>
+            <div class="pred-ball ghost skeleton"></div>
+            <div class="pred-ball ghost skeleton"></div>
+          </div>
+          <div class="pred-conf">
+            <span class="pred-conf-lbl">Confidence</span>
+            <div class="pred-track"><div class="pred-fill gold skeleton" style="width:55%"></div></div>
+            <span class="pred-pct gold">—</span>
+          </div>
+        </div>
+        <div class="pred-col">
+          <div class="pred-col-label">STL · Hexaprime Inc.</div>
+          <div class="pred-balls">
+            <div class="pred-ball ghost skeleton"></div>
+            <div class="pred-ball ghost skeleton"></div>
+            <div class="pred-ball ghost skeleton"></div>
+          </div>
+          <div class="pred-conf">
+            <span class="pred-conf-lbl">Confidence</span>
+            <div class="pred-track"><div class="pred-fill blue skeleton" style="width:48%"></div></div>
+            <span class="pred-pct blue">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="pred-footer">
+        <div class="pred-tags">
+          <span class="pred-tag skeleton" style="width:85px;height:16px;border:none;"></span>
+          <span class="pred-tag skeleton" style="width:65px;height:16px;border:none;"></span>
+          <span class="pred-tag skeleton" style="width:75px;height:16px;border:none;"></span>
+        </div>
+      </div>
+      <div class="pred-disclaimer">⚠ For entertainment only · Lottery draws are random · Play responsibly</div>
+    </div>
+  </div>
+</div>
+
+  <!-- ═══════════════════ ZONE: HIT TRACKER ═══════════════════ -->
+  <!-- ═══════════════════ ZONE: HIT TRACKER ═══════════════════ -->
+<div class="zone zone-hit">
+  <button class="pred-zone-toggle" onclick="toggleZone('hitZoneBody', this)">
+    <div class="section-label" style="margin-top:0;">
+      <h2>Prediction Hit Tracker</h2>
+      <div class="badge" style="background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);">JSONBin History</div>
+      <hr>
+    </div>
+    <span class="pred-zone-arrow">▼</span>
+  </button>
+
+  <div class="pred-zone-body" id="hitZoneBody">
+    <div class="hit-panel" id="hitPanel">
+      <div class="hit-panel-header">
         <div>
-          <div class="hist-panel-title">Swertres 3D</div>
-          <div class="hist-panel-sub">2PM · 5PM · 9PM draws</div>
+          <div class="hit-panel-title">SAVED PREDICTIONS RESULT</div>
+          <div class="hit-panel-sub">Matched against actual draw results</div>
         </div>
-        <span class="hist-arrow">▼</span>
+        <button class="hit-refresh-btn" id="hitRefreshBtn" onclick="loadHitTracker()" title="Refresh from JSONBin">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M1 4v6h6M23 20v-6h-6"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+          </svg>
+          Refresh
+        </button>
       </div>
-      <div class="hist-body" id="swHistBody">
-        <div class="hist-loading">Loading history…</div>
+      <div class="hit-tabs">
+        <button class="hit-tab active" id="hitTab3d" onclick="switchHitTab('3d')">Swertres 3D</button>
+        <button class="hit-tab" id="hitTabStl" onclick="switchHitTab('stl')">STL Hexaprime</button>
       </div>
-    </div>
-    <div class="hist-panel stl-hist" id="stlHistPanel">
-      <div class="hist-panel-header" onclick="toggleHistPanel('stlHistPanel')">
-        <div>
-          <div class="hist-panel-title">STL Hexaprime Inc.</div>
-          <div class="hist-panel-sub">10:30AM · 3PM · 8PM draws</div>
+      <div id="hitStatsBar" class="hit-stats-bar" style="display:none;">
+        <div class="hit-stat">
+          <div class="hit-stat-val" id="hitTotal3d">—</div>
+          <div class="hit-stat-lbl">SAVED</div>
         </div>
-        <span class="hist-arrow">▼</span>
+        <div class="hit-stat">
+          <div class="hit-stat-val green" id="hitWins3d">—</div>
+          <div class="hit-stat-lbl">HITS</div>
+        </div>
+        <div class="hit-stat">
+          <div class="hit-stat-val" id="hitRate3d">—</div>
+          <div class="hit-stat-lbl">HIT RATE</div>
+        </div>
       </div>
-      <div class="hist-body" id="stlHistBody">
-        <div class="hist-loading">Loading history…</div>
+      <div class="hit-body" id="hitBody">
+        <div class="hit-loading">Loading saved predictions…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- ═══════════════════ ZONE: DRAW HISTORY ═══════════════════ -->
+  <div class="zone zone-hist">
+    <div class="section-label" style="margin-top:0;">
+      <h2>Draw History</h2>
+      <div class="badge" style="background:rgba(251,146,60,0.12);color:#FB923C;border:1px solid rgba(251,146,60,0.28);">Last 30 Days</div>
+      <hr>
+    </div>
+
+    <div class="history-grid">
+      <div class="hist-panel sw-hist" id="swHistPanel">
+        <div class="hist-panel-header" onclick="toggleHistPanel('swHistPanel')">
+          <div>
+            <div class="hist-panel-title">Swertres 3D</div>
+            <div class="hist-panel-sub">2PM · 5PM · 9PM draws</div>
+          </div>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body" id="swHistBody">
+          <div class="hist-loading">Loading history…</div>
+        </div>
+      </div>
+      <div class="hist-panel stl-hist" id="stlHistPanel">
+        <div class="hist-panel-header" onclick="toggleHistPanel('stlHistPanel')">
+          <div>
+            <div class="hist-panel-title">STL Hexaprime Inc.</div>
+            <div class="hist-panel-sub">10:30AM · 3PM · 8PM draws</div>
+          </div>
+          <span class="hist-arrow">▼</span>
+        </div>
+        <div class="hist-body" id="stlHistBody">
+          <div class="hist-loading">Loading history…</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       DATE SEARCH SECTION
-  ═══════════════════════════════════════════════════════ -->
-  <div class="section-label" style="margin-top:36px;">
-    <h2>Search By Date</h2>
-    <div class="badge" style="background:rgba(26,86,219,0.15);color:#7EB3FF;border:1px solid rgba(26,86,219,0.25);">3D &amp; STL</div>
-    <hr>
+  <!-- ═══════════════════ ZONE: DATE SEARCH ═══════════════════ -->
+  <div class="zone zone-search">
+    <div class="section-label" style="margin-top:0;">
+      <h2>Search By Date</h2>
+      <div class="badge" style="background:rgba(56,189,248,0.12);color:#38BDF8;border:1px solid rgba(56,189,248,0.28);">3D &amp; STL</div>
+      <hr>
+    </div>
+
+    <div class="search-panel" style="margin-top:0;">
+      <div class="search-header">
+        <span class="search-header-icon">🔍</span>
+        <span class="search-header-title">Date Range Search</span>
+        <span class="search-header-sub">Single date or date range</span>
+      </div>
+      <div class="search-controls">
+        <div class="search-type-toggle">
+          <button class="search-type-btn active" id="btnSingle" onclick="setSearchMode('single')">Single Date</button>
+          <button class="search-type-btn" id="btnRange" onclick="setSearchMode('range')">Date Range</button>
+        </div>
+        <div class="search-field">
+          <label id="searchFromLabel">Select Date</label>
+          <input type="date" id="searchFrom" onchange="onSearchDateChange()">
+        </div>
+        <div class="search-field" id="searchToField" style="display:none;">
+          <label>End Date</label>
+          <input type="date" id="searchTo" onchange="onSearchDateChange()">
+        </div>
+        <button class="search-btn" onclick="runSearch()">Search</button>
+        <button class="search-clear-btn" onclick="clearSearch()">✕ Clear</button>
+      </div>
+      <div class="search-results-wrap" id="searchResultsWrap">
+        <div class="search-placeholder">Enter a date above and press Search to view results.</div>
+      </div>
+    </div>
   </div>
 
-  <div class="search-panel">
-    <div class="search-header">
-      <span class="search-header-icon">🔍</span>
-      <span class="search-header-title">Date Range Search</span>
-      <span class="search-header-sub">Single date or date range</span>
-    </div>
-    <div class="search-controls">
-      <div class="search-type-toggle">
-        <button class="search-type-btn active" id="btnSingle" onclick="setSearchMode('single')">Single Date</button>
-        <button class="search-type-btn" id="btnRange" onclick="setSearchMode('range')">Date Range</button>
+<!-- ═══════════════════ ZONE: INFO ═══════════════════ -->
+  <div class="zone zone-sw" style="margin-top:16px;">
+    <!-- DROPDOWN INFO -->
+    <div class="dropdown" style="margin-bottom:0;">
+      <button class="dropdown-toggle" id="dropdownToggle" onclick="toggleDropdown()">
+        <span>💡 Swertres Information</span>
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="dropdown-content" id="dropdownContent">
+        <!-- Info Bar -->
+        <div class="info-bar">
+          <div class="info-item">
+            <div class="label">Straight Play Prize</div>
+            <div class="value">₱4,500</div>
+            <div class="sub">per ₱12 play (exact order)</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Rambolito 3 Prize</div>
+            <div class="value">₱1,500</div>
+            <div class="sub">2 same + 1 different digit</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Rambolito 6 Prize</div>
+            <div class="value">₱750</div>
+            <div class="sub">3 different digits, any order</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Draw Schedule</div>
+            <div class="value" style="font-size:13px;line-height:1.6;">Daily</div>
+            <div class="sub">Mon – Sun · 2PM · 5PM · 9PM</div>
+          </div>
+        </div>
       </div>
-      <div class="search-field">
-        <label id="searchFromLabel">Select Date</label>
-        <input type="date" id="searchFrom" onchange="onSearchDateChange()">
-      </div>
-      <div class="search-field" id="searchToField" style="display:none;">
-        <label>End Date</label>
-        <input type="date" id="searchTo" onchange="onSearchDateChange()">
-      </div>
-      <button class="search-btn" onclick="runSearch()">Search</button>
-      <button class="search-clear-btn" onclick="clearSearch()">✕ Clear</button>
-    </div>
-    <div class="search-results-wrap" id="searchResultsWrap">
-      <div class="search-placeholder">Enter a date above and press Search to view results.</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       OFFICIAL SITE LINKS
-  ═══════════════════════════════════════════════════════ -->
-  <div class="section-label" style="margin-top:36px;">
-    <h2>Official Sites</h2>
-    <div class="badge" style="background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);">Tap to Open</div>
-    <hr>
-  </div>
 
-  <div class="site-links">
+  <!-- ═══════════════════ ZONE: OFFICIAL SITES ═══════════════════ -->
+  <div class="zone zone-links">
+    <div class="section-label" style="margin-top:0;">
+      <h2>Official Sites</h2>
+      <div class="badge" style="background:rgba(229,62,62,0.12);color:#F87171;border:1px solid rgba(229,62,62,0.28);">Tap to Open</div>
+      <hr>
+    </div>
+
+    <div class="site-links" style="margin-top:0;">
     <a class="site-link-btn sw-link"
        href="https://www.lottopcso.com/swertres-result-today/"
        target="_blank" rel="noopener">
@@ -1332,18 +1978,211 @@
       <span class="site-link-arrow">↗</span>
     </a>
   </div>
+  </div><!-- end zone-links -->
 
   <div class="source-note">
     Swertres 3D sourced from <a href="https://www.lottopcso.com" target="_blank">lottopcso.com</a> ·
     STL Misamis Oriental from <a href="https://www.pcsodraw.com" target="_blank">pcsodraw.com</a> (Hexaprime Inc.).<br>
-    For official verification visit <a href="https://www.pcso.gov.ph" target="_blank">pcso.gov.ph</a> · Auto-refreshes every 5 minutes.
+    For official verification visit <a href="https://www.pcso.gov.ph" target="_blank">pcso.gov.ph</a>
   </div>
   <div class="creator">________________________</div>
   <div class="creator">App created by RekzBanz</div>
 
 </div>
 
+<!-- ══════════════════════════════════════════════════════
+     HELP MODAL
+══════════════════════════════════════════════════════ -->
+<div class="help-overlay" id="helpOverlay" onclick="closeHelpOutside(event)">
+  <div class="help-modal" id="helpModal">
+
+    <div class="help-modal-header">
+      <div class="help-modal-title">
+        <span>📖</span> HOW TO USE THIS APP
+      </div>
+      <button class="help-close-btn" onclick="closeHelp()">✕</button>
+    </div>
+
+    <div class="help-modal-body">
+
+      <!-- Swertres 3D -->
+      <div class="help-section help-sw">
+        <div class="help-icon">🎱</div>
+        <div class="help-content">
+          <div class="help-section-title">Swertres 3D Lotto Results</div>
+          <div class="help-section-desc">
+            Shows today's <strong>official PCSO Swertres 3D</strong> draw results for the three daily draws.
+            Each ball shows the winning digit. Status badges tell you if a draw is <strong>LIVE</strong>,
+            <strong>UPCOMING</strong>, or <strong>FINAL</strong>. Results auto-refresh every 5 minutes.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">3 draws daily</span>
+            <span class="help-tip">2PM · 5PM · 9PM</span>
+            <span class="help-tip">Prize: ₱4,500</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STL -->
+      <div class="help-section help-stl">
+        <div class="help-icon">🎲</div>
+        <div class="help-content">
+          <div class="help-section-title">STL Misamis Oriental Results</div>
+          <div class="help-section-desc">
+            Shows today's <strong>STL Hexaprime Inc. Swer3</strong> draw results for Misamis Oriental.
+            Three draws are shown per day. Data is sourced live from pcsodraw.com and refreshes automatically.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">3 draws daily</span>
+            <span class="help-tip">10:30AM · 3PM · 8PM</span>
+            <span class="help-tip">STL Swer3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Predictions -->
+      <div class="help-section help-pred">
+        <div class="help-icon">🔮</div>
+        <div class="help-content">
+          <div class="help-section-title">Daily Predictions</div>
+          <div class="help-section-desc">
+            <strong>Tap the header to expand.</strong> Shows today's algorithmically predicted numbers for both
+            Swertres 3D and STL, generated once per day using weighted frequency analysis of past draws.
+            The <strong>confidence bar</strong> reflects how strongly recent history favors those digits —
+            not a guarantee of winning. Use <strong>↻ New Prediction</strong> to regenerate a fresh set.
+            Tap <strong>✦ Save 3D</strong> or <strong>✦ Save STL</strong> to store today's prediction.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">Freq. Analysis</span>
+            <span class="help-tip">Recency Weighting</span>
+            <span class="help-tip">Hot Streak Detect</span>
+            <span class="help-tip">Entertainment only</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit Tracker -->
+      <div class="help-section help-hit">
+        <div class="help-icon">🎯</div>
+        <div class="help-content">
+          <div class="help-section-title">Prediction Hit Tracker</div>
+          <div class="help-section-desc">
+            <strong>Tap the header to expand.</strong> Loads all your previously saved predictions and compares them against actual draw results. A prediction is a
+            <strong style="color:var(--green);">✓ HIT</strong> if all three digits appear in any draw
+            that day — <em>in any order (rambolito match)</em>. A
+            <strong style="color:#F87171;">✗ MISS</strong> means no draw matched. <strong>⌛ PENDING</strong>
+            means today's draws aren't all in yet. Use the <strong>Refresh</strong> button to re-fetch
+            the latest list from Cloud. Switch between <strong>Swertres 3D</strong> and
+            <strong>STL Hexaprime</strong> tabs to view each game's history separately.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">Any-order match</span>
+            <span class="help-tip">Cloud storage</span>
+            <span class="help-tip">Hit rate tracked</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Draw History -->
+      <div class="help-section help-hist">
+        <div class="help-icon">📅</div>
+        <div class="help-content">
+          <div class="help-section-title">Draw History</div>
+          <div class="help-section-desc">
+            Shows the last <strong>30 days</strong> of actual draw results for both Swertres 3D and STL.
+            <strong>Tap either panel header</strong> to expand and scroll through past results.
+            History is cached for 30 minutes to keep the app fast.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">Last 30 days</span>
+            <span class="help-tip">Tap to expand</span>
+            <span class="help-tip">Cached 30 min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Search -->
+      <div class="help-section help-search">
+        <div class="help-icon">🔍</div>
+        <div class="help-content">
+          <div class="help-section-title">Search By Date</div>
+          <div class="help-section-desc">
+            Look up draw results for a <strong>specific date</strong> or a <strong>date range</strong>.
+            Toggle between <em>Single Date</em> and <em>Date Range</em> mode using the buttons.
+            Results show both Swertres 3D and STL draws for the selected period. Only dates within
+            the last 30 days are available.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">Single or range</span>
+            <span class="help-tip">3D + STL combined</span>
+            <span class="help-tip">30-day window</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Swertres Info -->
+      <div class="help-section help-info">
+        <div class="help-icon">💡</div>
+        <div class="help-content">
+          <div class="help-section-title">Swertres Information</div>
+          <div class="help-section-desc">
+            Tap <strong>💡 Swertres Information</strong> to expand prize details.
+            <strong>Straight</strong> (exact order) pays ₱4,500. <strong>Rambolito 3</strong>
+            (2 same + 1 different, any order) pays ₱1,500. <strong>Rambolito 6</strong>
+            (3 different digits, any order) pays ₱750. All per ₱12 play.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">Straight ₱4,500</span>
+            <span class="help-tip">Rambolito 3 ₱1,500</span>
+            <span class="help-tip">Rambolito 6 ₱750</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Official Sites -->
+      <div class="help-section help-links">
+        <div class="help-icon">🌐</div>
+        <div class="help-content">
+          <div class="help-section-title">Official Sites</div>
+          <div class="help-section-desc">
+            Direct links to the official source pages. Tap <strong>Swertres 3D Results</strong>
+            to open lottopcso.com, or <strong>STL Misamis Oriental Results</strong> to open pcsodraw.com.
+            Use these to manually verify any result shown in the app.
+          </div>
+          <div class="help-tips">
+            <span class="help-tip">lottopcso.com</span>
+            <span class="help-tip">pcsodraw.com</span>
+            <span class="help-tip">Opens in new tab</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end help-modal-body -->
+
+    <div class="help-modal-footer">
+      ⚠ This app is for entertainment only · Lottery draws are random · Play responsibly
+    </div>
+
+  </div><!-- end help-modal -->
+</div><!-- end help-overlay -->
+
 <script>
+// ── HELP MODAL ────────────────────────────────────────────────────────────────
+function openHelp() {
+  document.getElementById('helpOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHelp() {
+  document.getElementById('helpOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeHelpOutside(e) {
+  if (e.target === document.getElementById('helpOverlay')) closeHelp();
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeHelp();
+});
+// ─────────────────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════
 //  CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1809,7 +2648,12 @@ function renderPredictions(sw, stl) {
     </div>
     <div class="pred-cols">
       <div class="pred-col">
-        <div class="pred-col-label">Swertres (3D)</div>
+        <div class="pred-col-header">
+          <div class="pred-col-label">Swertres (3D)</div>
+          <button class="pred-save-btn" id="saveBtnSw" onclick="savePredToJSONBin('3d')" title="Save this 3D prediction">
+            ✦ Save 3D
+          </button>
+        </div>
         <div class="pred-balls">${makeBalls(sw.digits, 'sw')}</div>
         <div class="pred-conf">
           <span class="pred-conf-lbl">Confidence</span>
@@ -1818,7 +2662,12 @@ function renderPredictions(sw, stl) {
         </div>
       </div>
       <div class="pred-col">
-        <div class="pred-col-label">STL · Hexaprime Inc.</div>
+        <div class="pred-col-header">
+          <div class="pred-col-label">STL · Hexaprime Inc.</div>
+          <button class="pred-save-btn" id="saveBtnStl" onclick="savePredToJSONBin('stl')" title="Save this STL prediction">
+            ✦ Save STL
+          </button>
+        </div>
         <div class="pred-balls">${makeBalls(stl.digits, 'st')}</div>
         <div class="pred-conf">
           <span class="pred-conf-lbl">Confidence</span>
@@ -1960,6 +2809,9 @@ async function loadAll() {
 
   // ── History — loads after live data is done; MISOR snapshot is now available ──
   loadHistory().catch(err => console.warn('[History]', err));
+
+  // ── Hit Tracker — auto-load on app open ──
+  setTimeout(() => loadHitTracker().catch(err => console.warn('[HitTracker]', err)), 1200);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -2516,6 +3368,272 @@ function reloadIframe(iframeId) {
   if (!iframe) return;
   clearNotice(iframeId);
   iframe.src = IFRAME_URLS[iframeId];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  JSONBIN.IO — SAVE & LOAD PREDICTIONS
+//  Bin ID: 69a683a3ae596e708f5a0272
+//  Stores: { predictions_3d: [...], predictions_stl: [...] }
+// ═══════════════════════════════════════════════════════════════════════════
+
+const JSONBIN_BIN_ID  = '69a683a3ae596e708f5a0272';
+const JSONBIN_BASE    = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+// No Master key needed for public read; write key must be set in header
+// For public bins, omit X-Master-Key and use X-Access-Key if needed.
+// We use fetch without auth for public bins, PUT updates the whole bin.
+
+let _hitActiveTab = '3d';  // '3d' | 'stl'
+
+// ── Toast notification helper ────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type === 'success' ? '✓' : '✗'}</span> ${msg}`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+const JSONBIN_MASTER_KEY = '$2a$10$CvK4w8DTXZ1//5H1cpGQIerIT8Kzvk0FQHosdNm.XS0Q9n6sMmaf6';
+
+// ── Fetch current bin data ───────────────────────────────────────────────────
+async function fetchBinData() {
+  const res = await fetch(`${JSONBIN_BASE}/latest`, {
+    headers: {
+      'X-Master-Key': JSONBIN_MASTER_KEY,
+      'X-Bin-Meta': 'false'
+    }
+  });
+  if (!res.ok) throw new Error(`JSONBin fetch failed: ${res.status}`);
+  return await res.json();
+}
+
+// ── Write entire bin back ────────────────────────────────────────────────────
+async function writeBinData(data) {
+  const res = await fetch(JSONBIN_BASE, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_MASTER_KEY
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`JSONBin write failed: ${res.status}`);
+  return await res.json();
+}
+
+// ── Save one prediction (type = '3d' | 'stl') ───────────────────────────────
+async function savePredToJSONBin(type) {
+  const btnId = type === '3d' ? 'saveBtnSw' : 'saveBtnStl';
+  const btn   = document.getElementById(btnId);
+  if (btn) { btn.disabled = true; btn.classList.add('saving'); btn.textContent = '…Saving'; }
+
+  // Get current prediction from localStorage cache
+  let cached;
+  try { cached = JSON.parse(localStorage.getItem(PRED_STORE_KEY)); } catch(e) {}
+  if (!cached) { showToast('No prediction found — run prediction first', 'error'); if(btn){btn.disabled=false;btn.classList.remove('saving');btn.innerHTML='✦ Save '+type.toUpperCase();} return; }
+
+  const pred  = type === '3d' ? cached.sw : cached.stl;
+  if (!pred || !pred.digits) { showToast('Prediction data missing', 'error'); if(btn){btn.disabled=false;btn.classList.remove('saving');} return; }
+
+  const entry = {
+    id:         Date.now(),
+    date:       getPHDateStr(),
+    type:       type,
+    digits:     pred.digits,
+    confidence: pred.confidence,
+    savedAt:    new Date().toISOString()
+  };
+
+  try {
+    let binData;
+    try { binData = await fetchBinData(); } catch(e) { binData = {}; }
+    if (!binData.predictions_3d)  binData.predictions_3d  = [];
+    if (!binData.predictions_stl) binData.predictions_stl = [];
+
+    const arr  = type === '3d' ? binData.predictions_3d : binData.predictions_stl;
+    const key  = type === '3d' ? 'predictions_3d' : 'predictions_stl';
+
+    // Avoid duplicate for same date
+    const alreadySaved = arr.some(e => e.date === entry.date);
+    if (alreadySaved) {
+      showToast(`${type.toUpperCase()} prediction for ${entry.date} already saved`, 'error');
+      if (btn) { btn.disabled=false; btn.classList.remove('saving'); btn.innerHTML='✦ Save '+type.toUpperCase(); }
+      return;
+    }
+
+    arr.push(entry);
+    binData[key] = arr;
+
+    await writeBinData(binData);
+
+    if (btn) { btn.classList.remove('saving'); btn.classList.add('saved'); btn.innerHTML = '✓ Saved'; }
+    showToast(`${type.toUpperCase()} prediction saved! (${entry.digits.join('-')})`, 'success');
+
+    // Refresh hit tracker after saving
+    setTimeout(() => loadHitTracker(), 600);
+
+  } catch(err) {
+    console.error('[JSONBin save]', err);
+    showToast('Save failed — check network', 'error');
+    if (btn) { btn.disabled=false; btn.classList.remove('saving'); btn.innerHTML='✦ Save '+type.toUpperCase(); }
+  }
+}
+
+// ── Switch between 3D / STL tabs in the hit tracker ─────────────────────────
+function switchHitTab(tab) {
+  _hitActiveTab = tab;
+  document.getElementById('hitTab3d').classList.toggle('active',  tab === '3d');
+  document.getElementById('hitTabStl').classList.toggle('active', tab === 'stl');
+  renderHitBody(window._binCache || {});
+}
+
+// ── Main: load hit tracker from JSONBin, compare with history ────────────────
+async function loadHitTracker() {
+  const btn = document.getElementById('hitRefreshBtn');
+  if (btn) btn.classList.add('spinning');
+  document.getElementById('hitBody').innerHTML = '<div class="hit-loading">Loading from JSONBin…</div>';
+  document.getElementById('hitStatsBar').style.display = 'none';
+
+  try {
+    const binData = await fetchBinData();
+    window._binCache = binData;
+
+    // Wait for history to be available (it loads async after page start)
+    if (!window._histDataReady) {
+      await new Promise(resolve => {
+        const iv = setInterval(() => { if (window._histDataReady) { clearInterval(iv); resolve(); } }, 400);
+        setTimeout(() => { clearInterval(iv); resolve(); }, 8000);
+      });
+    }
+
+    renderHitBody(binData);
+    document.getElementById('hitStatsBar').style.display = '';
+  } catch(err) {
+    console.error('[HitTracker]', err);
+    document.getElementById('hitBody').innerHTML =
+      '<div class="hit-empty"><span class="icon">⚠️</span>Could not load JSONBin data.<br>Check your bin ID or network.</div>';
+  }
+
+  if (btn) btn.classList.remove('spinning');
+}
+
+// ── Render the hit tracker rows for the active tab ───────────────────────────
+function renderHitBody(binData) {
+  const is3d   = _hitActiveTab === '3d';
+  const arr    = is3d ? (binData.predictions_3d || []) : (binData.predictions_stl || []);
+  const histKey = is3d ? 'sw' : 'stl';
+  const histData = (window._historyData && window._historyData[histKey]) || [];
+  const ballCls  = is3d ? 'sw-style' : 'stl-style';
+
+  // Update stats
+  const statTotal = document.getElementById('hitTotal3d');
+  const statWins  = document.getElementById('hitWins3d');
+  const statRate  = document.getElementById('hitRate3d');
+
+  if (arr.length === 0) {
+    document.getElementById('hitBody').innerHTML =
+      `<div class="hit-empty"><span class="icon">📭</span>No saved ${_hitActiveTab.toUpperCase()} predictions yet.<br>Use the <strong>Save</strong> button above to record today's prediction.</div>`;
+    if (statTotal) statTotal.textContent = '0';
+    if (statWins)  statWins.textContent  = '0';
+    if (statRate)  statRate.textContent  = '—';
+    return;
+  }
+
+  // Newest first
+  const sorted = [...arr].sort((a, b) => b.date.localeCompare(a.date));
+
+  let wins = 0;
+  const rows = sorted.map(entry => {
+    const { date, digits, confidence } = entry;
+
+    // Find actual results for this date in history
+    const histEntry = histData.find(h => h.dateKey === date);
+    const actuals   = histEntry ? histEntry.draws.filter(d => d.nums) : [];
+
+    // Check if ANY draw on that date exactly matched (any order / rambolito)
+    const today = getPHDateStr();
+    let matchResult = 'pending';
+    let matchedDraw = null;
+
+    // Sort helper — compare digits regardless of position
+    function digitsMatch(a, b) {
+      if (!a || !b || a.length !== 3 || b.length !== 3) return false;
+      return [...a].sort().join('') === [...b].sort().join('');
+    }
+
+    if (date < today || actuals.length > 0) {
+      if (actuals.length === 0 && date < today) {
+        matchResult = 'miss'; // date passed, no data found
+      } else {
+        for (const draw of actuals) {
+          if (draw.nums && digitsMatch(draw.nums, digits)) {
+            matchResult = 'win';
+            matchedDraw = draw;
+            break;
+          }
+        }
+        if (matchResult !== 'win' && date < today) matchResult = 'miss';
+        if (matchResult !== 'win' && date === today && actuals.length < 3) matchResult = 'pending';
+        if (matchResult !== 'win' && date === today && actuals.length >= 3) matchResult = 'miss';
+      }
+    }
+
+    if (matchResult === 'win') wins++;
+
+    // Build predicted balls
+    const predBalls = digits.map(d =>
+      `<div class="hit-ball ${ballCls}">${d}</div>`
+    ).join('');
+
+    // Build actual draws (show first 1-3 actual results for comparison)
+    let actualHTML = '';
+    if (actuals.length > 0) {
+      // Show best matching or first draw
+      const showDraw = matchedDraw || actuals[0];
+      if (showDraw && showDraw.nums) {
+        const aBalls = showDraw.nums.map((n) => {
+          const isMatch = digits.includes(n);
+          return `<div class="hit-actual-ball ${isMatch ? 'matched' : ''}">${n}</div>`;
+        }).join('');
+        actualHTML = `
+          <div class="hit-actual">
+            <div class="hit-actual-label">${showDraw.time || 'ACTUAL'}</div>
+            <div class="hit-actual-nums">${aBalls}</div>
+          </div>`;
+      }
+    } else if (matchResult === 'pending') {
+      actualHTML = `<div class="hit-actual"><div class="hit-actual-label">PENDING</div></div>`;
+    }
+
+    const badgeClass = matchResult === 'win' ? 'win' : matchResult === 'pending' ? 'pending' : 'miss';
+    const badgeText  = matchResult === 'win' ? '✓ HIT' : matchResult === 'pending' ? '⌛ PENDING' : '✗ MISS';
+
+    return `<div class="hit-row">
+      <div class="hit-row-left">
+        <div class="hit-date">${keyToShortLabel(date)} · ${confidence}% conf.</div>
+        <div class="hit-nums">${predBalls}</div>
+      </div>
+      ${actualHTML}
+      <span class="hit-badge ${badgeClass}">${badgeText}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('hitBody').innerHTML = rows || '<div class="hit-empty">No entries yet.</div>';
+
+  const total = sorted.length;
+  const rate  = total > 0 ? Math.round((wins / total) * 100) + '%' : '—';
+  if (statTotal) statTotal.textContent = total;
+  if (statWins)  statWins.textContent  = wins;
+  if (statRate)  statRate.textContent  = rate;
+}
+
+function toggleZone(bodyId, btn) {
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  body.classList.toggle('open');
+  btn.classList.toggle('open');
 }
 
 </script>
