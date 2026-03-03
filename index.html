@@ -3455,13 +3455,25 @@ async function savePredToJSONBin(type) {
     const arr  = type === '3d' ? binData.predictions_3d : binData.predictions_stl;
     const key  = type === '3d' ? 'predictions_3d' : 'predictions_stl';
 
-    // Avoid duplicate for same date
-    const alreadySaved = arr.some(e => e.date === entry.date);
-    if (alreadySaved) {
-      showToast(`${type.toUpperCase()} prediction for ${entry.date} already saved`, 'error');
-      if (btn) { btn.disabled=false; btn.classList.remove('saving'); btn.innerHTML='✦ Save '+type.toUpperCase(); }
-      return;
-    }
+    // Avoid exact duplicate (same date AND same digits)
+const alreadySaved = arr.some(e =>
+  e.date === entry.date &&
+  Array.isArray(e.digits) &&
+  e.digits.join('') === entry.digits.join('')
+);
+
+if (alreadySaved) {
+  showToast(
+    `${type.toUpperCase()} prediction already saved for today (${entry.digits.join('-')})`,
+    'error'
+  );
+  if (btn) {
+    btn.disabled = false;
+    btn.classList.remove('saving');
+    btn.innerHTML = '✦ Save ' + type.toUpperCase();
+  }
+  return;
+}
 
     arr.push(entry);
     binData[key] = arr;
